@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DARMEN</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#EEF8F8;--surface:#fff;--ink:#0E2A33;--muted:#5B7580;--brand:#0B7F8C;--brand2:#14B8C4;--line:#D3E8EA;--accent:#F26B4E;--ok:#1B8A5A;--map:#DDF0F1;--street:#fff;--mount:#C5E3E3;--red:#D93A3A;--blue:#2F6BFF;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0A1B20;--surface:#11282F;--ink:#E6F4F5;--muted:#8FAAB2;--brand:#33C3CF;--line:#1F3E46;--accent:#FF8468;--ok:#4FD29A;--map:#123238;--street:#1B434B;--mount:#164048;--red:#FF6B6B;--blue:#6B95FF}}
+:root[data-theme="dark"]{--bg:#0A1B20;--surface:#11282F;--ink:#E6F4F5;--muted:#8FAAB2;--brand:#33C3CF;--line:#1F3E46;--accent:#FF8468;--ok:#4FD29A;--map:#123238;--street:#1B434B;--mount:#164048;--red:#FF6B6B;--blue:#6B95FF}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Manrope,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--brand2);outline-offset:2px}
+h1,h2,h3{margin:0;line-height:1.15}
+.btn{background:var(--brand);color:#fff;border:0;border-radius:12px;padding:13px 20px;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block;text-align:center}
+.btn:hover{filter:brightness(1.1)}.btn.ghost{background:transparent;color:var(--brand);border:2px solid var(--brand)}.btn.sm{padding:8px 14px;font-size:14px}
+.btn.red{background:var(--red);color:#fff}
+.hide{display:none!important}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
+.logo i{width:34px;height:34px;border-radius:50%;background:var(--brand);display:grid;place-items:center}
+select,input[type=search],input[type=number]{padding:9px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg)}
+.geo{max-width:520px;margin:56px auto;text-align:center;padding:0 20px}
+.geo .pin{width:84px;height:84px;margin:0 auto 18px;border-radius:50%;background:var(--brand);display:grid;place-items:center}
+.geo h1{font-size:clamp(28px,5vw,38px);font-weight:800}.geo p{color:var(--muted)}
+.geo .row{display:grid;gap:10px;margin-top:22px}
+.err{color:var(--accent);font-weight:600;font-size:14px;min-height:20px}
+.tabs{display:flex;gap:6px;overflow-x:auto;background:var(--surface);border-bottom:1px solid var(--line);padding:0 14px}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:13px 14px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tab[aria-selected=true]{color:var(--brand);border-color:var(--brand)}
+.app{max-width:1280px;margin:0 auto;padding:18px 20px 40px}
+.searchbar{display:flex;gap:10px;flex-wrap:wrap}
+.searchbar input{flex:1 1 280px;font-size:18px;padding:15px 18px;border-radius:14px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;font-weight:600;font-size:14px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--brand);border-color:var(--brand);color:#fff}
+.banner{background:var(--surface);border:1.5px solid var(--line);border-left:5px solid var(--red);border-radius:14px;padding:10px 14px;margin-bottom:12px;font-size:15px}
+.layout{display:grid;grid-template-columns:400px 1fr;gap:18px;align-items:start}
+.listhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.listhead h2{font-size:18px}
+.list{display:grid;gap:10px;max-height:640px;overflow-y:auto;padding-right:4px}
+.ph{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer;text-align:left;width:100%;display:block}
+.ph[aria-current=true]{border-color:var(--brand2);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand2) 25%,transparent)}
+.ph .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.ph .name{font-weight:800}.ph .price{font-weight:800;font-size:20px;color:var(--brand);white-space:nowrap}.ph .price.low{color:var(--ok)}
+.ph .meta{color:var(--muted);font-size:14px}
+.tag{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:1px 8px;background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok);margin-top:6px}
+.tag.few{background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent)}
+.tag.red{background:color-mix(in srgb,var(--red) 18%,transparent);color:var(--red)}.tag.blue{background:color-mix(in srgb,var(--blue) 18%,transparent);color:var(--blue)}
+.mapwrap{position:sticky;top:12px;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--map);position:relative;z-index:0}
+.mapwrap svg{display:block;width:100%;height:auto}.pinp{cursor:pointer}
+.mcol{position:sticky;top:12px}.mcol .mapwrap{position:relative}
+#lmap{height:560px;width:100%;background:var(--map);font:inherit}
+.logo{letter-spacing:.08em}
+#cmap{height:560px;width:100%;background:var(--m-land);font:inherit}#cmap.pick{cursor:crosshair}
+.bk{display:grid;gap:8px;margin-top:8px}.bk label{font-weight:600;font-size:14px}.bk input:not([type=checkbox]),.bk select{width:100%}
+.bkc{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:4px}.bkc .chk{font-size:14px;font-weight:600}.bkc .chk input{width:18px;height:18px}
+
+#lmap.pick{cursor:crosshair}
+.empty{background:var(--surface);border:1.5px dashed var(--line);border-radius:16px;padding:24px;color:var(--muted)}
+.note{font-size:13px;color:var(--muted);margin-top:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px}
+.set{max-width:640px;display:grid;gap:18px}.set label{display:block;font-weight:700;margin-bottom:8px}
+.set select{width:100%;font-size:17px}.set .chips{margin:0}.chk{display:flex;gap:10px;align-items:center;font-weight:600}
+.chk input{width:22px;height:22px;accent-color:var(--brand)}
+.don{display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start}
+.don h1{font-size:clamp(26px,4vw,36px);font-weight:800;color:var(--red)}.don .sub{color:var(--muted);max-width:60ch;margin:6px 0 14px}
+.ann{background:var(--surface);border:1.5px solid var(--line);border-left:6px solid var(--red);border-radius:16px;padding:16px;margin-bottom:12px}
+.ann.t{border-left-color:var(--accent)}.ann.p{border-left-color:var(--brand2)}
+.ann .row{display:flex;gap:14px;align-items:center}
+.grp{flex:none;width:64px;height:64px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-weight:800;font-size:20px}
+.ann.t .grp{background:var(--accent)}.ann.p .grp{background:var(--brand)}
+.ann .info{flex:1;min-width:0}.ann .ttl{font-weight:800;font-size:18px}
+.more{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:15px}
+form.post{display:grid;gap:10px}form.post label{font-weight:600;font-size:14px}form.post select,form.post input{width:100%}
+/* real map */
+.mk{width:28px;height:28px;border-radius:50%;color:#fff;font-weight:800;display:grid;place-items:center;border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.45);font-size:15px;line-height:1}
+.mk.h,.mk.c{border-radius:7px}.mk.on{transform:scale(1.3);box-shadow:0 0 0 3px var(--accent)}
+.meDot{width:18px;height:18px;border-radius:50%;background:#2F6BFF;border:3px solid #fff;box-shadow:0 0 0 0 rgba(47,107,255,.6);animation:ring 1.8s infinite}
+@keyframes ring{to{box-shadow:0 0 0 18px rgba(47,107,255,0)}}
+.meLbl{font-weight:800;font-size:13px;color:#0E2A33;background:#fff;border-radius:8px;padding:1px 7px;border:1px solid #2F6BFF;white-space:nowrap}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--surface);color:var(--ink)}
+.leaflet-popup-content-wrapper{border-radius:14px}.leaflet-popup-content{margin:12px 14px;font:inherit;font-size:14px;line-height:1.45}
+.pop b{font-size:16px}.pop div{margin-top:4px}.pop .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.pop a:not(.btn){color:var(--brand);font-weight:700}
+.btn.dis{opacity:.5;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.meDot{animation:none}}
+@keyframes pulse{0%{r:8;opacity:.6}100%{r:26;opacity:0}}.pulse{animation:pulse 1.8s ease-out infinite}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}}
+@media (max-width:860px){.layout,.don{grid-template-columns:1fr}.mapwrap{position:relative;order:-1}.mcol{position:static;order:-1}.list{max-height:none}#lmap,#cmap,#mmap{height:380px}}
+.mz{position:absolute;right:10px;top:10px;display:grid;gap:6px;z-index:2000}.mz button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:800;font-size:20px;cursor:pointer;line-height:1}
+.mpop{position:absolute;z-index:3000;background:var(--surface);color:var(--ink);border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.35);width:270px;max-width:86%;transform:translate(-50%,-100%);margin-top:-6px;padding:12px 14px;font-size:14px;line-height:1.45;cursor:default}
+.mpop .x{position:absolute;right:6px;top:0;border:0;background:none;font-size:22px;cursor:pointer;color:var(--muted)}
+.mattr{position:absolute;left:8px;bottom:6px;font-size:11px;color:var(--muted);background:color-mix(in srgb,var(--surface) 85%,transparent);padding:1px 6px;border-radius:6px;z-index:2000;pointer-events:none}
+.mmk{position:absolute;left:0;top:0;cursor:pointer}
+/* реалистичная карта (стиль OpenStreetMap) */
+:root{--m-land:#f2efe9;--m-res:#e0dfdf;--m-com:#f2dad9;--m-ind:#ebdbe8;--m-park:#c8facc;--m-wood:#add19e;--m-water:#aad3df;--m-bld:#d9d0c9;--m-bldl:#c4b7ab;--m-rc:#c6bfb4;--m-rf:#fff;--m-sc:#c9c47c;--m-sf:#f7fabf;--m-pc:#d9a35e;--m-pf:#fcd6a4;--m-tx:#444;--m-ptx:#2f7a3a;--m-halo:#fff;--m-tree:rgba(82,140,70,.55);--m-foot:#f08070}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--m-land:#1d2a2d;--m-res:#22302f;--m-com:#2e2830;--m-ind:#2a2833;--m-park:#1f3b2c;--m-wood:#1a3325;--m-water:#1d4a5a;--m-bld:#33413f;--m-bldl:#3d4d4a;--m-rc:#101a1c;--m-rf:#3a4a4c;--m-sc:#3d4a2a;--m-sf:#55603a;--m-pc:#4a3a22;--m-pf:#7a5d33;--m-tx:#c9d8da;--m-ptx:#7fc48a;--m-halo:#11282f;--m-tree:rgba(110,170,110,.45);--m-foot:#c06a5a}}
+:root[data-theme="dark"]{--m-land:#1d2a2d;--m-res:#22302f;--m-com:#2e2830;--m-ind:#2a2833;--m-park:#1f3b2c;--m-wood:#1a3325;--m-water:#1d4a5a;--m-bld:#33413f;--m-bldl:#3d4d4a;--m-rc:#101a1c;--m-rf:#3a4a4c;--m-sc:#3d4a2a;--m-sf:#55603a;--m-pc:#4a3a22;--m-pf:#7a5d33;--m-tx:#c9d8da;--m-ptx:#7fc48a;--m-halo:#11282f;--m-tree:rgba(110,170,110,.45);--m-foot:#c06a5a}
+#mmap{height:560px;width:100%;background:var(--m-land);font:inherit}#mmap.pick{cursor:crosshair}
+#lmap{background:var(--m-land)}
+.mz.real{left:10px;right:auto;top:10px;gap:0;background:#fff;border:2px solid rgba(0,0,0,.25);border-radius:5px;overflow:hidden}
+.mz.real button{width:30px;height:30px;border:0;border-radius:0;background:#fff;color:#000;font-size:22px;font-weight:600}.mz.real button+button{border-top:1px solid #ccc}.mz.real button:hover{background:#f4f4f4}
+.mattr.real{left:auto;right:0;bottom:0;border-radius:0;color:#333;background:rgba(255,255,255,.8)}
+.mscale{position:absolute;left:8px;bottom:8px;z-index:2000;pointer-events:none;border:2px solid #333;border-top:0;padding:0 5px;font-size:11px;font-weight:700;line-height:14px;color:#222;background:rgba(255,255,255,.75);white-space:nowrap}
+.mpop.real{width:300px;max-width:88%;border-radius:12px;margin-top:0}
+.mpop.real::after{content:"";position:absolute;left:50%;bottom:-9px;margin-left:-9px;border:9px solid transparent;border-bottom:0;border-top-color:var(--surface)}
+.pn{position:relative;width:30px;height:42px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.4))}.pn svg{display:block}.pn.on{transform:scale(1.18);transform-origin:50% 100%}
+.pn .pl{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);margin-bottom:1px;white-space:nowrap;background:var(--surface);color:var(--ink);border:2px solid;border-radius:12px;padding:0 8px;font:800 12px/20px Manrope,sans-serif}
+.pop .ok2{color:var(--ok);font-weight:800}.pop .no2{color:var(--red);font-weight:800}
+.pop .mh{margin-top:8px;font-weight:800;font-size:13px;color:var(--muted)}
+.pop .mlist{max-height:110px;overflow-y:auto;margin-top:4px;border-top:1px solid var(--line)}
+.pop .mr{display:flex;justify-content:space-between;gap:10px;padding:3px 0;border-bottom:1px solid var(--line);font-size:13px;margin-top:0}
+.pop .mr.off{color:var(--muted)}.pop .mr.cu{font-weight:800;background:color-mix(in srgb,var(--brand2) 14%,transparent)}
+.ph.off{opacity:.72}.sep{font-weight:800;color:var(--muted);font-size:14px;margin:6px 2px 0}
+.banner.ok{border-left-color:var(--brand)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><i><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></i>DARMEN</div>
+  <select id="hl" aria-label="Language"><option value="ru">Русский</option><option value="kk">Қазақша</option><option value="en">English</option></select>
+</header>
+
+<main id="s-geo" class="geo">
+  <div class="pin"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></div>
+  <h1 data-i="geoT"></h1>
+  <p data-i="geoP"></p>
+  <div class="row"><button class="btn" id="geoBtn" data-i="geoB"></button>
+    <label for="gc" style="font-weight:600;text-align:left" data-i="sCity"></label><select id="gc" style="width:100%;font-size:17px"></select>
+    <button class="btn ghost" id="geoSkip" data-i="geoS"></button></div>
+  <p class="err" id="geoErr" role="alert"></p>
+</main>
+
+<div id="s-app" class="hide">
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+  <div class="app">
+    <section id="v-meds">
+      <form class="searchbar" id="sform" autocomplete="off">
+        <input type="search" id="q" list="meds" aria-label="Search">
+        <datalist id="meds"></datalist>
+        <button class="btn" type="submit" data-i="find"></button>
+      </form>
+      <div class="chips" id="chips"></div>
+      <div class="banner hide" id="banner"></div>
+      <div class="banner ok hide" id="pbanner"></div>
+      <div class="chips" id="mtools"></div>
+      <div class="layout">
+        <section>
+          <div class="listhead"><h2 id="lh"></h2><div><button class="chip" id="sortD"></button> <button class="chip" id="sortP"></button></div></div>
+          <div class="list" id="list"></div>
+          <p class="note" id="note"></p>
+        </section>
+        <div class="mcol"><div class="mapwrap"><div id="mmap"></div></div><div class="banner hide" id="mpanel" style="margin:12px 0 0"></div></div>
+      </div>
+    </section>
+    <section id="v-hosp" class="hide">
+      <div class="listhead"><h2 data-i="hl2"></h2><div id="hchips" class="chips" style="margin:0"></div></div>
+      <form class="searchbar" id="hform" autocomplete="off">
+        <input type="search" id="hq" aria-label="Search">
+        <button class="btn" type="submit" data-i="find"></button>
+      </form>
+      <div class="chips" id="htools"></div>
+      <p class="note" id="hstat" role="status" style="margin:0 0 12px"></p>
+      <div class="layout">
+        <div><div class="list" id="hlist"></div><p class="note" id="hnote"></p></div>
+        <div class="mcol"><div class="mapwrap"><div id="lmap"></div></div><div class="banner hide" id="rpanel" style="margin:12px 0 0"></div></div>
+      </div>
+    </section>
+    <section id="v-cat" class="hide">
+      <div class="listhead"><h2 id="ch"></h2></div>
+      <form class="searchbar" id="cform" autocomplete="off">
+        <input type="search" id="cq" aria-label="Search">
+        <button class="btn" type="submit" data-i="find"></button>
+      </form>
+      <div class="chips" id="csv"></div>
+      <div class="chips" id="ctools"></div>
+      <div class="banner hide" id="cban"></div>
+      <p class="note" id="cstat" role="status" style="margin:0 0 12px"></p>
+      <div class="layout">
+        <div><div class="list" id="clist"></div><p class="note" id="cnote"></p></div>
+        <div class="mcol"><div class="mapwrap"><div id="cmap"></div></div><div class="banner hide" id="cpanel" style="margin:12px 0 0"></div></div>
+      </div>
+    </section>
+    <section id="v-don" class="hide"></section>
+    <section id="v-set" class="hide"></section>
+  </div>
+</div>
+
+<script>/* Встроенная карта: реалистичная подложка в стиле OpenStreetMap (рисуется кодом) + настоящие тайлы OSM, если есть интернет. */
+(function(){
+const NS="http://www.w3.org/2000/svg",RD=Math.PI/180,Z0=10,Z1=18;
+const mx=(g,z)=>(g+180)/360*256*2**z,my=(a,z)=>(1-Math.log(Math.tan(a*RD)+1/Math.cos(a*RD))/Math.PI)/2*256*2**z;
+const ux=(x,z)=>x/(256*2**z)*360-180,uy=(y,z)=>Math.atan(Math.sinh(Math.PI-2*Math.PI*y/(256*2**z)))/RD;
+const hav=(a,b)=>{const dl=(b.lat-a.lat)*RD,dg=(b.lng-a.lng)*RD,x=Math.sin(dl/2)**2+Math.cos(a.lat*RD)*Math.cos(b.lat*RD)*Math.sin(dg/2)**2;return 12742000*Math.asin(Math.sqrt(x))};
+const ll=(a,g)=>({lat:a,lng:g,distanceTo(o){return hav(this,o)}});
+const P=a=>Array.isArray(a)?ll(a[0],a[1]):ll(a.lat,a.lng);
+const hs=(a,b)=>{let h=Math.imul(a,73856093)^Math.imul(b,19349663);h=Math.imul(h^h>>>13,1274126177);return(h^h>>>16)>>>0};
+/* --- процедурный «город»: слегка повёрнутая сетка улиц, районы, парки, река, дома --- */
+const MXD=111320*Math.cos(45*RD),MYD=110574,TH=-.21,CS=Math.cos(TH),SN=Math.sin(TH),SU=140,SV=110;
+const md=(a,n)=>((a%n)+n)%n,rd=(a,b,c)=>hs((a*131+(c||0)*7919)|0,(b*197+(c||0)*104729)|0)/4294967296,r1=n=>Math.round(n*10)/10;
+const ul=i=>i*SU+(rd(i,0,1)-.5)*34,vl=j=>j*SV+(rd(j,0,2)-.5)*28;
+const ucl=i=>md(i,6)===0?2:md(i,3)===0?1:0,vcl=j=>md(j,7)===0?2:md(j,7)===3?1:0;
+const toUV=(lat,lng)=>{const x=lng*MXD,y=lat*MYD;return[x*CS+y*SN,-x*SN+y*CS]};
+const fromUV=(u,v)=>{const x=u*CS-v*SN,y=u*SN+v*CS;return[y/MYD,x/MXD]};
+const rivV=(u,k)=>k*9000+3600+(rd(k,1,3)-.5)*2400+650*Math.sin(u/2600+k)+220*Math.sin(u/760+k*2);
+const dtype=(a,b,l)=>{const r=rd(a,b,3+l);return r<.09?"w":r<.17?"p":r<.29?"i":r<.45?"c":"r"};
+const DC={w:"var(--m-wood)",p:"var(--m-park)",i:"var(--m-ind)",c:"var(--m-com)",r:"var(--m-res)"};
+const nA=a=>a>90?a-180:a<-90?a+180:a,ex=s=>String(s).replace(/[&<>]/g,"");
+let UID=0;
+class Bounds{constructor(p){this.p=[];p.forEach(x=>this.extend(x))}extend(x){this.p.push(P(x));return this}
+ getNorthEast(){return ll(Math.max(...this.p.map(q=>q.lat)),Math.max(...this.p.map(q=>q.lng)))}
+ getSouthWest(){return ll(Math.min(...this.p.map(q=>q.lat)),Math.min(...this.p.map(q=>q.lng)))}}
+class Marker{constructor(p,o){this.ll=P(p);this.o=o||{};this.h={};this.pop=null}
+ bindPopup(html){this.pop=html;return this}on(e,f){this.h[e]=f;return this}addTo(g){g.add(this);return this}
+ setIcon(i){this.o.icon=i;if(this.el)this.el.innerHTML=i.html;return this}openPopup(){if(this.m)this.m.openPop(this);return this}}
+class Group{constructor(){this.items=[];this.m=null}add(x){this.items.push(x);if(this.m)this.m.draw();return this}clearLayers(){this.items=[];if(this.m)this.m.draw();return this}addTo(m){this.m=m;m.layers.push(this);m.draw();return this}}
+class Circle{constructor(p,o){this.ll=P(p);this.o=o||{}}addTo(g){g.add(this);return this}}
+class Geo{constructor(g,o){this.g=g;this.o=o||{}}addTo(m){m.layers.push(this);m.draw();return this}
+ getBounds(){return new Bounds(this.g.coordinates.map(c=>[c[1],c[0]]))}}
+class LMap{
+ constructor(id,o){const e=this.el=document.getElementById(id);e.innerHTML="";e.style.position="relative";e.style.overflow="hidden";e.style.touchAction="none";e.style.cursor="grab";
+  this.o=o||{};this.real=!!this.o.real;this.uid=++UID;this.tc=new Map();this.tu=null;this.tok=0;
+  this.layers=[];this.h={};this.c=ll(43.24,76.95);this.z=14;this.w=600;this.h2=400;this.pm=null;
+  this.svg=document.createElementNS(NS,"svg");this.svg.setAttribute("style","position:absolute;left:0;top:0;width:100%;height:100%;display:block");
+  this.svt=document.createElementNS(NS,"svg");this.svt.setAttribute("style","position:absolute;left:0;top:0;width:100%;height:100%;display:block;pointer-events:none");
+  this.tl=document.createElement("div");this.tl.style.cssText="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:hidden";
+  this.mk=document.createElement("div");this.mk.style.cssText="position:absolute;left:0;top:0;width:100%;height:100%";
+  this.pp=document.createElement("div");this.pp.className="mpop"+(this.real?" real":"");this.pp.style.display="none";
+  const ct=document.createElement("div");ct.className="mz"+(this.real?" real":"");ct.innerHTML='<button type="button" aria-label="Zoom in">+</button><button type="button" aria-label="Zoom out">−</button>';
+  const at=this.at=document.createElement("div");at.className="mattr"+(this.real?" real":"");at.textContent="DARMEN · схема";
+  e.append(this.svg,this.tl,this.svt,this.mk,this.pp,ct,at);
+  if(this.real){this.sc=document.createElement("div");this.sc.className="mscale";e.append(this.sc)}
+  ct.children[0].onclick=()=>this.zoomBy(1);ct.children[1].onclick=()=>this.zoomBy(-1);
+  [ct,this.pp].forEach(x=>x.addEventListener("pointerdown",v=>v.stopPropagation()));
+  const ps=new Map();let s0,c0;this.mv=0;
+  e.addEventListener("pointerdown",v=>{ps.set(v.pointerId,[v.clientX,v.clientY]);try{e.setPointerCapture(v.pointerId)}catch(x){}this.mv=ps.size>1?9:0;this.d0=0;s0=[v.clientX,v.clientY];c0=[mx(this.c.lng,this.z),my(this.c.lat,this.z)]});
+  e.addEventListener("pointermove",v=>{if(!ps.has(v.pointerId))return;ps.set(v.pointerId,[v.clientX,v.clientY]);
+   if(ps.size===2){const[a,b]=[...ps.values()],d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(!this.d0)this.d0=d;if(d/this.d0>1.6){this.d0=d;this.zoomBy(1)}else if(d/this.d0<.62){this.d0=d;this.zoomBy(-1)}this.mv=9;return}
+   if(this.mv===9)return;const dx=v.clientX-s0[0],dy=v.clientY-s0[1];if(Math.hypot(dx,dy)>4)this.mv=1;if(!this.mv)return;
+   this.c=ll(uy(c0[1]-dy,this.z),ux(c0[0]-dx,this.z));this.draw()});
+  const up=v=>{if(!ps.has(v.pointerId))return;ps.delete(v.pointerId);
+   if(v.type==="pointerup"&&!this.mv&&!ps.size){const r=e.getBoundingClientRect(),z=this.z;this.closePopup();
+    this.fire("click",{latlng:ll(uy(my(this.c.lat,z)-this.h2/2+v.clientY-r.top,z),ux(mx(this.c.lng,z)-this.w/2+v.clientX-r.left,z))})}
+   if(ps.size)this.mv=9};
+  e.addEventListener("pointerup",up);e.addEventListener("pointercancel",up);
+  e.addEventListener("wheel",v=>{v.preventDefault();const n=Date.now();if(n-(this.wt||0)<200)return;this.wt=n;this.zoomBy(v.deltaY<0?1:-1)},{passive:false});
+  e.addEventListener("dblclick",v=>{if(!v.target.closest(".mz,.mpop,.mmk"))this.zoomBy(1)});
+  if(window.ResizeObserver)new ResizeObserver(()=>this.draw()).observe(e)}
+ fire(n,d){(this.h[n]||[]).forEach(f=>f(d))}on(n,f){(this.h[n]=this.h[n]||[]).push(f);return this}
+ setView(c,z){this.c=P(c);if(z!=null)this.z=Math.max(Z0,Math.min(Z1,z));this.draw();return this}
+ zoomBy(d){this.z=Math.max(Z0,Math.min(Z1,this.z+d));this.draw()}
+ getZoom(){return this.z}getCenter(){return ll(this.c.lat,this.c.lng)}invalidateSize(){this.draw()}
+ getBounds(){const z=this.z,w=this.el.clientWidth||600,h=this.el.clientHeight||400,cx=mx(this.c.lng,z),cy=my(this.c.lat,z);
+  return new Bounds([[uy(cy-h/2,z),ux(cx-w/2,z)],[uy(cy+h/2,z),ux(cx+w/2,z)]])}
+ fitBounds(b,o){o=o||{};const pd=(o.padding&&o.padding[0])||0,w=(this.el.clientWidth||600)-2*pd,h=(this.el.clientHeight||400)-2*pd,ne=b.getNorthEast(),sw=b.getSouthWest();
+  let z=Math.min(o.maxZoom||Z1,Z1);for(;z>Z0;z--){if(mx(ne.lng,z)-mx(sw.lng,z)<=w&&my(sw.lat,z)-my(ne.lat,z)<=h)break}
+  this.z=z;this.c=ll(uy((my(ne.lat,z)+my(sw.lat,z))/2,z),ux((mx(ne.lng,z)+mx(sw.lng,z))/2,z));this.draw();return this}
+ removeLayer(l){this.layers=this.layers.filter(x=>x!==l);this.draw()}
+ openPop(m){this.pm=m;this.pp.innerHTML='<button class="x" type="button" aria-label="Close">×</button>'+m.pop;this.pp.style.display="block";this.pp.querySelector(".x").onclick=()=>this.closePopup();
+  if(this.Y){const y=my(m.ll.lat,this.z)-my(this.c.lat,this.z)+this.h2/2,a=(m.o.icon&&m.o.icon.popupAnchor)||[0,0],need=this.real?this.pp.offsetHeight-a[1]+16:240;if(y<need)this.c=ll(uy(my(this.c.lat,this.z)-(need-y),this.z),this.c.lng)}this.draw()}
+ closePopup(){this.pm=null;this.pp.style.display="none"}
+ draw(){if(this.q)return;this.q=requestAnimationFrame(()=>{this.q=0;this.paint()})}
+ attr(){if(this.real)this.at.textContent=this.tok?"© OpenStreetMap":"DARMEN · схема"}
+ tiles(w,h,z,cx,cy){
+  if(!this.tu)return;const n=2**z,x0=Math.floor((cx-w/2)/256),x1=Math.floor((cx+w/2)/256),y0=Math.max(0,Math.floor((cy-h/2)/256)),y1=Math.min(n-1,Math.floor((cy+h/2)/256)),need=new Set();
+  for(let tx=x0;tx<=x1;tx++)for(let ty=y0;ty<=y1;ty++){const k=z+"/"+tx+"/"+ty;need.add(k);let r=this.tc.get(k);
+   if(!r){const im=document.createElement("img");im.alt="";im.draggable=false;im.style.cssText="position:absolute;left:0;top:0;width:256px;height:256px;max-width:none;opacity:0;transition:opacity .25s;user-select:none";
+    r={im,bad:false};this.tc.set(k,r);im.onload=()=>{im.style.opacity=1;this.tok=1;this.attr()};im.onerror=()=>{r.bad=true;im.remove()};
+    im.src=this.tu.replace("{z}",z).replace("{x}",md(tx,n)).replace("{y}",ty);this.tl.appendChild(im)}
+   if(!r.bad)r.im.style.transform=`translate(${Math.round(tx*256-cx+w/2)}px,${Math.round(ty*256-cy+h/2)}px)`}
+  for(const[k,r]of this.tc)if(!need.has(k)){r.im.remove();this.tc.delete(k)}}
+ basemap(w,h,z,cx,cy,X,Y){
+  const cfg=(window.MAPCFG&&window.MAPCFG())||{},names=cfg.streets&&cfg.streets.length?cfg.streets:["Центральная","Школьная","Садовая","Парковая","Новая","Мира"],words=cfg.words&&cfg.words.length?cfg.words:["Нур","Алтын","Береке"],U=this.uid;
+  const c0=toUV(this.c.lat,this.c.lng),u0=c0[0],v0=c0[1],g1=fromUV(u0+500,v0),g2=fromUV(u0,v0+500);
+  const A=(X(g1[1])-w/2)/500,C=(Y(g1[0])-h/2)/500,B=(X(g2[1])-w/2)/500,D=(Y(g2[0])-h/2)/500,det=A*D-B*C;
+  const Q=(u,v)=>[w/2+A*(u-u0)+B*(v-v0),h/2+C*(u-u0)+D*(v-v0)];
+  const cr=[[0,0],[w,0],[0,h],[w,h]].map(p=>{const dx=p[0]-w/2,dy=p[1]-h/2;return[u0+(D*dx-B*dy)/det,v0+(-C*dx+A*dy)/det]});
+  const umin=Math.min(...cr.map(p=>p[0])),umax=Math.max(...cr.map(p=>p[0])),vmin=Math.min(...cr.map(p=>p[1])),vmax=Math.max(...cr.map(p=>p[1])),pxm=Math.hypot(A,C);
+  const iA=Math.floor(umin/SU)-1,iB=Math.ceil(umax/SU)+1,jA=Math.floor(vmin/SV)-1,jB=Math.ceil(vmax/SV)+1;
+  const kA=Math.floor((vmin-5700)/9000),kB=Math.ceil((vmax-1500)/9000);
+  const pt=(u,v)=>{const q=Q(u,v);return r1(q[0])+" "+r1(q[1])};
+  const rect=(a,b,c,d)=>`M${pt(a,c)}L${pt(b,c)}L${pt(b,d)}L${pt(a,d)}Z`;
+  const ox=((-cx%12)+12)%12,oy=((-cy%12)+12)%12,ox2=((-cx%18)+18)%18,oy2=((-cy%18)+18)%18;
+  let s=`<defs><pattern id="tw${U}" x="${ox}" y="${oy}" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.8" style="fill:var(--m-tree)"/><circle cx="9" cy="9" r="1.8" style="fill:var(--m-tree)"/></pattern><pattern id="tp${U}" x="${ox2}" y="${oy2}" width="18" height="18" patternUnits="userSpaceOnUse"><circle cx="4" cy="5" r="1.6" style="fill:var(--m-tree)"/><circle cx="13" cy="13" r="1.6" style="fill:var(--m-tree)"/></pattern></defs><rect width="${w}" height="${h}" style="fill:var(--m-land)"/>`;
+  /* районы и кварталы */
+  const lv=z>=15?0:z>=13?1:2,gs=[1,4,16][lv],G={},add=(k,d)=>{G[k]=(G[k]||"")+d},blocks=[];
+  for(let ci=Math.floor(iA/gs);ci<Math.ceil(iB/gs);ci++)for(let cj=Math.floor(jA/gs);cj<Math.ceil(jB/gs);cj++){
+   const i=ci*gs,j=cj*gs,uA=ul(i),uB=ul(i+gs),vA=vl(j),vB=vl(j+gs);
+   let ty=lv===0?dtype(Math.floor(i/4),Math.floor(j/4),0):dtype(ci,cj,lv===1?0:1),riv=false;
+   if(lv===0){const um=(uA+uB)/2,vm=(vA+vB)/2;for(let k=kA;k<=kB;k++)if(Math.abs(vm-rivV(um,k))<(vB-vA)/2+30){riv=true;break}
+    if(riv)ty="p";else if(ty==="r"&&rd(i,j,7)<.08)ty="p";blocks.push({i,j,uA,uB,vA,vB,ty,riv})}
+   add(ty,rect(uA,uB,vA,vB))}
+  for(const k of["r","c","i","p","w"])if(G[k])s+=`<path d="${G[k]}" style="fill:${DC[k]};stroke:${DC[k]};stroke-width:.7"/>`;
+  if(z>=14){if(G.w)s+=`<path d="${G.w}" style="fill:url(#tw${U})"/>`;if(G.p)s+=`<path d="${G.p}" style="fill:url(#tp${U})"/>`}
+  /* детали кварталов: дорожки, пруды, дома, подписи парков */
+  let bl="",foot="",pond="",lab="";
+  if(lv===0&&z>=16)for(const b of blocks){
+   if(b.ty==="p"){
+    if(rd(b.i,b.j,8)<.8){foot+=rd(b.i,b.j,8)<.4?`M${pt(b.uA+6,b.vA+6)}L${pt(b.uB-6,b.vB-6)}`:`M${pt(b.uA+6,b.vB-6)}L${pt(b.uB-6,b.vA+6)}`}
+    if(!b.riv&&rd(b.i,b.j,9)<.22){const q=Q((b.uA+b.uB)/2,(b.vA+b.vB)/2);pond+=`<circle cx="${r1(q[0])}" cy="${r1(q[1])}" r="${r1(pxm*Math.min(b.uB-b.uA,b.vB-b.vA)*.17)}" style="fill:var(--m-water)"/>`}
+    else if(!b.riv&&rd(b.i,b.j,10)<.5){const q=Q((b.uA+b.uB)/2,(b.vA+b.vB)/2);lab+=`<text x="${r1(q[0])}" y="${r1(q[1])}" text-anchor="middle" style="font:italic 600 12px Manrope,sans-serif;fill:var(--m-ptx);stroke:var(--m-halo);stroke-width:3;paint-order:stroke">${ex(cfg.park||"Парк")} «${ex(words[Math.floor(rd(b.i,b.j,14)*words.length)])}»</text>`}
+    continue}
+   if(b.riv)continue;
+   const mu0=ucl(b.i)===2?16:ucl(b.i)===1?11:7,mu1=ucl(b.i+1)===2?16:ucl(b.i+1)===1?11:7,mv0=vcl(b.j)===2?16:vcl(b.j)===1?11:7,mv1=vcl(b.j+1)===2?16:vcl(b.j+1)===1?11:7;
+   const a0=b.uA+mu0,a1=b.uB-mu1,c1=b.vA+mv0,c2=b.vB-mv1,cu=b.ty==="c"?52:b.ty==="i"?64:z>=17?26:34,cv=b.ty==="c"?40:b.ty==="i"?36:z>=17?20:26;
+   const nu=Math.floor((a1-a0)/cu),nv=Math.floor((c2-c1)/cv);if(nu<1||nv<1)continue;const su=(a1-a0)/nu,sv=(c2-c1)/nv;
+   for(let p=0;p<nu;p++)for(let q=0;q<nv;q++)if(rd(b.i*31+p,b.j*37+q,11)<.78){const ins=2+rd(b.i*31+p,b.j*37+q,12)*4;bl+=rect(a0+p*su+ins*.6,a0+(p+1)*su-ins*.6,c1+q*sv+ins*.5,c1+(q+1)*sv-ins*.5)}}
+  s+=pond;if(foot)s+=`<path d="${foot}" fill="none" style="stroke:var(--m-foot)" stroke-width="1.3" stroke-dasharray="4 3"/>`;
+  if(bl)s+=`<path d="${bl}" style="fill:var(--m-bld);stroke:var(--m-bldl);stroke-width:.7"/>`;
+  /* дороги */
+  let mi="",co="",ar="";const iS=z>=13?1:36,jS=z>=13?1:42;
+  const seg=(u1,v1,u2,v2)=>`M${pt(u1,v1)}L${pt(u2,v2)}`;
+  for(let i=Math.ceil(iA/iS)*iS;i<=iB;i+=iS){const c=ucl(i);
+   if(c===2)ar+=seg(ul(i),vmin-300,ul(i),vmax+300);else if(c===1)co+=seg(ul(i),vmin-300,ul(i),vmax+300);
+   else if(z>=15)for(let j=jA;j<jB;j++)if(rd(i,j,5)<.9)mi+=seg(ul(i),vl(j),ul(i),vl(j+1))}
+  for(let j=Math.ceil(jA/jS)*jS;j<=jB;j+=jS){const c=vcl(j);
+   if(c===2)ar+=seg(umin-300,vl(j),umax+300,vl(j));else if(c===1)co+=seg(umin-300,vl(j),umax+300,vl(j));
+   else if(z>=15)for(let i=iA;i<iB;i++)if(rd(j,i,6)<.9)mi+=seg(ul(i),vl(j),ul(i+1),vl(j))}
+  const road=(d,wd,cas,fil,cw)=>d?`<path d="${d}" style="stroke:${cas}" stroke-width="${r1(wd+cw)}"/><path d="${d}" style="stroke:${fil}" stroke-width="${r1(wd)}"/>`:"";
+  s+=`<g fill="none" stroke-linecap="round" stroke-linejoin="round">`+road(mi,Math.max(8*pxm,1.4),"var(--m-rc)","var(--m-rf)",Math.max(1.2,pxm*1.2))+road(co,Math.max(13*pxm,2),"var(--m-sc)","var(--m-sf)",1.4);
+  let rv="";const step=Math.max(30,40/pxm);
+  for(let k=kA;k<=kB;k++){let d="";for(let u=umin-step;u<=umax+step;u+=step)d+=(d?"L":"M")+pt(u,rivV(u,k));rv+=`<path d="${d}" style="stroke:var(--m-water)" stroke-width="${r1(Math.max(55*pxm,3))}"/>`}
+  s+=rv+road(ar,Math.max(21*pxm,3),"var(--m-pc)","var(--m-pf)",1.6)+`</g>`;
+  /* подписи улиц */
+  if(z>=15){const aU=nA(Math.atan2(D,B)/RD),aV=nA(Math.atan2(C,A)/RD),fs=z>=17?12:11;
+   const L1=(x,y,a,txt,bd)=>{if(x<24||x>w-24||y<10||y>h-10)return;lab+=`<text transform="translate(${r1(x)} ${r1(y)}) rotate(${r1(a)})" text-anchor="middle" dy="${r1(fs*.35)}" style="font:${bd?700:600} ${fs}px Manrope,sans-serif;fill:var(--m-tx);stroke:var(--m-halo);stroke-width:3;paint-order:stroke;stroke-linejoin:round">${ex(txt)}</text>`};
+   for(let i=iA;i<=iB;i++){const c=ucl(i);if(c===0&&z<17)continue;const Pp=c?760:300,nm=names[Math.floor(rd(i,0,12)*names.length)];if(nm.length*fs*.58>Pp*pxm*.9)continue;
+    for(let m=Math.floor(vmin/Pp)-1;m<=Math.ceil(vmax/Pp);m++){const v=m*Pp+rd(i,m,11)*Pp*.6;if(c===0&&!(rd(i,Math.floor(v/SV),5)<.9))continue;const q=Q(ul(i),v);L1(q[0],q[1],aU,nm,c===2)}}
+   for(let j=jA;j<=jB;j++){const c=vcl(j);if(c===0&&z<17)continue;const Pp=c?900:340,nm=names[Math.floor(rd(j,1,13)*names.length)];if(nm.length*fs*.58>Pp*pxm*.9)continue;
+    for(let m=Math.floor(umin/Pp)-1;m<=Math.ceil(umax/Pp);m++){const u=m*Pp+rd(j,m,11)*Pp*.6;if(c===0&&!(rd(j,Math.floor(u/SU),6)<.9))continue;const q=Q(u,vl(j));L1(q[0],q[1],aV,nm,c===2)}}}
+  return s+lab}
+ paint(){const e=this.el,w=e.clientWidth,h=e.clientHeight;if(!w||!h)return;this.w=w;this.h2=h;const z=this.z,cx=mx(this.c.lng,z),cy=my(this.c.lat,z);
+  const X=g=>mx(g,z)-cx+w/2,Y=a=>my(a,z)-cy+h/2;this.X=X;this.Y=Y;let s="",t="";
+  if(this.real){s=this.basemap(w,h,z,cx,cy,X,Y);this.tiles(w,h,z,cx,cy);
+   const mpp=40075016.686*Math.cos(this.c.lat*RD)/(256*2**z),cf=(window.MAPCFG&&window.MAPCFG())||{};let d=10;for(const n of[10,20,50,100,200,500,1000,2000,5000,10000,20000,50000])if(n/mpp<=110)d=n;
+   this.sc.style.width=Math.round(d/mpp)+"px";this.sc.textContent=d>=1000?d/1000+" "+(cf.km||"км"):d+" "+(cf.m||"м")}
+  else{
+  const ppd=256*2**z/360,cs=Math.cos(this.c.lat*RD);let st=.0025;while(st*ppd<36)st*=2;const sa=st*cs;
+  const i0=Math.floor(ux(cx-w/2,z)/st),i1=Math.ceil(ux(cx+w/2,z)/st),j0=Math.floor(uy(cy+h/2,z)/sa),j1=Math.ceil(uy(cy-h/2,z)/sa);
+  s=`<rect width="${w}" height="${h}" style="fill:var(--map)"/>`;
+  for(let i=i0;i<i1;i++)for(let j=j0;j<j1;j++){const q=hs(i,j)%12;if(q<2){const x=X(i*st),y=Y((j+1)*sa);s+=`<rect x="${x}" y="${y}" width="${X((i+1)*st)-x}" height="${Y(j*sa)-y}" style="fill:${q?"var(--mount)":"color-mix(in srgb,var(--ok) 25%,var(--map))"}"/>`}}
+  s+=`<g style="stroke:var(--street)" fill="none" stroke-linecap="round">`;
+  for(let i=i0;i<=i1;i++)s+=`<path d="M${X(i*st)} 0V${h}" stroke-width="${i%4?2+z*.25:4+z*.6}"/>`;
+  for(let j=j0;j<=j1;j++)s+=`<path d="M0 ${Y(j*sa)}H${w}" stroke-width="${j%4?2+z*.25:4+z*.6}"/>`;
+  s+="</g>"}
+  const items=this.layers.flatMap(l=>l.items||[l]),ms=[];
+  items.forEach(i=>{if(i instanceof Marker)ms.push(i);
+   else if(i instanceof Circle){const r=i.o.radius/(40075016.686*Math.cos(i.ll.lat*RD)/(256*2**z));t+=`<circle cx="${X(i.ll.lng)}" cy="${Y(i.ll.lat)}" r="${r}" style="fill:${i.o.color||"#2F6BFF"};fill-opacity:.1;stroke:${i.o.color||"#2F6BFF"}" stroke-width="1"/>`}
+   else if(i instanceof Geo){const st2=i.o.style||{};t+=`<path d="${i.g.coordinates.map((c,k)=>(k?"L":"M")+X(c[0])+" "+Y(c[1])).join("")}" fill="none" stroke="${st2.color||"#0B7F8C"}" stroke-width="${st2.weight||5}" stroke-opacity="${st2.opacity||.9}" stroke-linecap="round" stroke-linejoin="round"/>`}});
+  this.svg.innerHTML=s;this.svt.innerHTML=t;
+  const live=new Set();
+  ms.forEach(m=>{m.m=this;live.add(m);const ic=m.o.icon||{html:"●"};
+   if(!m.el){const d=m.el=document.createElement("div");d.className="mmk";d.innerHTML=ic.html;if(m.o.title)d.title=m.o.title;
+    d.addEventListener("pointerdown",v=>v.stopPropagation());
+    d.onclick=v=>{v.stopPropagation();if(m.h.click)m.h.click(v);if(m.pop)this.openPop(m)};
+    if(m.o.keyboard!==false){d.tabIndex=0;d.onkeydown=v=>{if(v.key==="Enter")d.onclick(v)}}}
+   if(m.el.parentNode!==this.mk)this.mk.appendChild(m.el);
+   const sz=ic.iconSize||[0,0],an=ic.iconAnchor||[sz[0]/2,sz[1]/2],x=X(m.ll.lng),y=Y(m.ll.lat);
+   m.el.style.transform=`translate(${x-an[0]}px,${y-an[1]}px)`;m.el.style.zIndex=100+(m.o.zIndexOffset||0)+Math.round(y)});
+  [...this.mk.children].forEach(c=>{if(!ms.some(m=>m.el===c))c.remove()});
+  if(this.pm){if(!live.has(this.pm))this.closePopup();else{const a=(this.pm.o.icon&&this.pm.o.icon.popupAnchor)||[0,0];this.pp.style.left=X(this.pm.ll.lng)+a[0]+"px";this.pp.style.top=Y(this.pm.ll.lat)+a[1]+"px"}}}
+}
+window.L={map:(id,o)=>new LMap(id,o),tileLayer:(u)=>({addTo(m){if(m.real){m.tu=u;m.draw()}return this}}),layerGroup:()=>new Group(),marker:(p,o)=>new Marker(p,o),divIcon:o=>o,circle:(p,o)=>new Circle(p,o),geoJSON:(g,o)=>new Geo(g,o),latLngBounds:a=>new Bounds(a),
+ /* маршрут по улицам «города» (когда нет интернета для OSRM) */
+ route:(a,b)=>{const A=toUV(a.lat,a.lng),B=toUV(b.lat,b.lng),ja=Math.round(A[1]/SV),ib=Math.round(B[0]/SU),pts=[A,[A[0],vl(ja)],[ul(ib),vl(ja)],[ul(ib),B[1]],B];let d=0;for(let k=1;k<pts.length;k++)d+=Math.hypot(pts[k][0]-pts[k-1][0],pts[k][1]-pts[k-1][1]);
+  return{coords:pts.map(p=>{const g=fromUV(p[0],p[1]);return[g[1],g[0]]}),dist:d}}};
+})();
+</script>
+<script>
+const $=s=>document.querySelector(s);
+const D={
+geoT:["Включите геолокацию","Геолокацияны қосыңыз","Turn on location"],
+geoP:["Нужна, чтобы показать ближайшие медицинские учреждения и посчитать расстояние. Данные остаются в вашем браузере.","Ең жақын медициналық мекемелерді көрсету және қашықтықты есептеу үшін керек. Деректер браузеріңізде қалады.","We use it to show the nearest medical facilities and work out distances. Your data stays in your browser."],
+geoB:["Включить геолокацию","Геолокацияны қосу","Turn on location"],
+geoS:["Продолжить с центром выбранного города","Таңдалған қала орталығымен жалғастыру","Continue with the city center"],
+geoW:["Определяем местоположение…","Орналасқан жерді анықтап жатырмыз…","Finding your location…"],
+geoE:["Доступ к геолокации не получен. Выберите город ниже и нажмите кнопку — потом можно указать место на карте.","Геолокацияға рұқсат алынбады. Төменнен қаланы таңдап, түймені басыңыз — кейін картадан орынды белгілей аласыз.","Location access was not granted. Pick a city below and continue — you can then mark your spot on the map."],
+tM:["Лекарства","Дәрілер","Medicines"],tH:["Больницы","Ауруханалар","Hospitals"],tD:["Донорство","Донорлық","Blood donation"],tS:["Настройки","Баптаулар","Settings"],
+ph:["Название лекарства, например: Нурофен","Дәрі атауы, мысалы: Нурофен","Medicine name, e.g. Nurofen"],
+find:["Найти","Іздеу","Search"],
+all:["Все аптеки рядом","Жақын маңдағы барлық дәріханалар","All pharmacies nearby"],
+nf:["Лекарство не найдено","Дәрі табылмады","Medicine not found"],
+nfT:["По запросу ничего не нашлось. Выберите лекарство из подсказок.","Сұрау бойынша ештеңе табылмады. Ұсыныстардан таңдаңыз.","Nothing found. Pick a medicine from the suggestions."],
+inN:["{m} — в {n} аптеках","{m} — {n} дәріханада бар","{m} — in {n} pharmacies"],
+noSt:["Сейчас нет в наличии ни в одной аптеке. Попробуйте аналог.","Қазір ешбір дәріханада жоқ. Баламасын қарап көріңіз.","Out of stock everywhere right now. Try an analogue."],
+near:["Ближе","Жақын","Nearest"],cheap:["Дешевле","Арзан","Cheapest"],
+inS:["В наличии","Бар","In stock"],few:["Осталось {n} уп.","Қалғаны {n} қорап","{n} packs left"],
+low:["Самая низкая цена","Ең төмен баға","Lowest price"],here:["Вы здесь","Сіз мұндасыз","You are here"],
+manual:["Выбранное место","Таңдалған орын","Selected place"],
+demo:["На вкладке «Лекарства» аптеки на схеме, цены и наличие — демонстрационные (реальных цен в OpenStreetMap нет).","«Дәрілер» бетінде схемадағы дәріханалар, баға мен қолда барлығы — демонстрациялық (OpenStreetMap-та нақты бағалар жоқ).","On the Medicines tab the schematic pharmacies, prices and stock are demo data (OpenStreetMap has no real prices)."],
+out:["Вы не в этом городе — схема показывает центр выбранного города.","Сіз бұл қалада емессіз — сызба таңдалған қаланың орталығын көрсетеді.","You are outside this city, so the schematic uses its center."],
+nh:["Ближайшая больница","Ең жақын аурухана","Nearest hospital"],nc:["Ближайшая поликлиника","Ең жақын емхана","Nearest clinic"],na:["Ближайшее медучреждение","Ең жақын медициналық мекеме","Nearest medical facility"],
+hosp:["Больница","Аурухана","Hospital"],clin:["Поликлиника","Емхана","Clinic"],pharm:["Аптека","Дәріхана","Pharmacy"],fall:["Все","Барлығы","All"],
+hosps:["Больницы","Ауруханалар","Hospitals"],clins:["Поликлиники","Емханалар","Clinics"],pharms:["Аптеки","Дәріханалар","Pharmacies"],
+h24:["Круглосуточно","Тәулік бойы","24 hours"],call:["Позвонить","Қоңырау шалу","Call"],
+hl2:["Больницы, поликлиники и аптеки рядом","Жақын маңдағы аурухана, емхана және дәріханалар","Hospitals, clinics and pharmacies nearby"],
+hph:["Название больницы, поликлиники или аптеки","Аурухана, емхана немесе дәріхана атауы","Hospital, clinic or pharmacy name"],
+loading:["Загружаем данные OpenStreetMap…","OpenStreetMap деректері жүктелуде…","Loading OpenStreetMap data…"],
+loadErr:["Не удалось загрузить данные OpenStreetMap. Проверьте интернет и нажмите «Обновить».","OpenStreetMap деректерін жүктеу мүмкін болмады. Интернетті тексеріп, «Жаңарту» басыңыз.","Could not load OpenStreetMap data. Check your connection and press Refresh."],
+found:["Найдено: {n}","Табылды: {n}","Found: {n}"],
+noRes:["В этой области ничего не найдено. Сдвиньте карту и нажмите «Искать здесь» или выберите другой город.","Бұл аумақта ештеңе табылмады. Картаны жылжытып, «Осы жерден іздеу» басыңыз немесе басқа қаланы таңдаңыз.","Nothing found here. Move the map and press “Search here”, or pick another city."],
+sHere:["Искать здесь","Осы жерден іздеу","Search here"],refresh:["Обновить","Жаңарту","Refresh"],myLoc:["Моё местоположение","Менің орным","My location"],
+pick:["Указать место на карте","Картадан орынды белгілеу","Pick my spot on the map"],
+pickHint:["Нажмите на карту, чтобы указать, где вы находитесь.","Қай жерде екеніңізді белгілеу үшін картаны басыңыз.","Tap the map to set where you are."],
+locErr:["Не удалось определить местоположение. Выберите город или укажите место на карте.","Орынды анықтау мүмкін болмады. Қаланы таңдаңыз немесе картадан белгілеңіз.","Could not get your location. Choose a city or pick a spot on the map."],
+leafErr:["Не удалось загрузить карту (Leaflet). Проверьте интернет и обновите страницу.","Картаны (Leaflet) жүктеу мүмкін болмады. Интернетті тексеріп, бетті жаңартыңыз.","Could not load the map library (Leaflet). Check your connection and reload."],
+route:["Построить маршрут","Бағыт салу","Get directions"],walk:["Пешком","Жаяу","On foot"],drive:["На машине","Көлікпен","By car"],
+routeErr:["Не удалось построить маршрут. Попробуйте другой способ или повторите позже.","Бағыт салу мүмкін болмады. Басқа тәсілді көріңіз немесе кейінірек қайталаңыз.","Could not build a route. Try another mode or retry later."],
+routeInfo:["Маршрут: {d}, примерно {t}","Бағыт: {d}, шамамен {t}","Route: {d}, about {t}"],clearRoute:["Сбросить маршрут","Бағытты жою","Clear route"],
+nav:["Открыть в навигаторе","Навигаторда ашу","Open in navigator"],
+addr0:["Адрес не указан","Мекенжай көрсетілмеген","Address not listed"],phone0:["Телефон не указан","Телефон көрсетілмеген","Phone not listed"],hours0:["График не указан","Жұмыс кестесі көрсетілмеген","Hours not listed"],
+unnamed:["Без названия","Атаусыз","Unnamed"],mn:["мин","мин","min"],hr:["ч","сағ","h"],site:["Сайт","Сайт","Website"],
+osm:["Данные: © участники OpenStreetMap. Телефон и график показываются, только если они есть на карте.","Деректер: © OpenStreetMap қатысушылары. Телефон мен кесте картада бар болса ғана көрсетіледі.","Data: © OpenStreetMap contributors. Phone and hours appear only if they are mapped."],
+sCity:["Город","Қала","City"],sLang:["Язык","Тіл","Language"],
+sFac:["Показывать ближайшие больницы на схеме лекарств","Дәрі сызбасында жақын ауруханаларды көрсету","Show nearby hospitals on the medicine schematic"],
+sType:["Что искать рядом","Жақын маңнан не іздеу","Look for nearby"],sLoc:["Обновить геолокацию","Геолокацияны жаңарту","Update my location"],
+dT:["Срочно нужна кровь","Қан шұғыл қажет","Blood needed urgently"],
+dS:["Больницы публикуют объявления, когда нужен донор для срочной операции. Выберите группу крови и откликнитесь.","Ауруханалар шұғыл ота үшін донор қажет болғанда хабарландыру жариялайды. Қан тобыңызды таңдап, үн қосыңыз.","Hospitals post requests when a donor is needed for urgent surgery. Pick your blood group and respond."],
+dem2:["Демо: больницы и объявления в этом разделе вымышленные. Реальные данные больниц нужно подключать через их систему.","Демо: бұл бөлімдегі аурухана мен хабарландырулар ойдан шығарылған. Нақты деректер ауруханалардың жүйесі арқылы қосылуы тиіс.","Demo: hospitals and requests in this section are fictional. Real data must come from hospitals’ own systems."],
+dAny:["Все группы","Барлық топтар","All groups"],dNeed:["Нужна группа {g}","{g} тобы қажет","Group {g} needed"],
+units:["Нужно: {n} ед.","Қажет: {n} бірлік","Needed: {n} units"],
+u:["Срочно","Шұғыл","Urgent"],t:["Сегодня","Бүгін","Today"],p:["На этой неделе","Осы аптада","This week"],
+op:["Срочная операция","Шұғыл ота","Urgent surgery"],em:["Экстренная помощь","Жедел көмек","Emergency care"],tr:["Переливание","Қан құю","Transfusion"],
+ago:["{n} мин назад","{n} мин бұрын","{n} min ago"],agoH:["{n} ч назад","{n} сағ бұрын","{n} h ago"],now:["только что","дәл қазір","just now"],
+help:["Могу сдать кровь","Қан тапсыра аламын","I can donate"],
+thanks:["Спасибо! Позвоните в больницу и скажите, что откликнулись на объявление.","Рақмет! Ауруханаға қоңырау шалып, хабарландыруға үн қосқаныңызды айтыңыз.","Thank you! Call the hospital and say you are responding to the request."],
+rulesT:["Кто может стать донором","Кім донор бола алады","Who can donate"],
+r1:["Возраст 18–60 лет, вес от 50 кг","Жасы 18–60, салмағы 50 кг-нан кем емес","Age 18–60, weight from 50 kg"],
+r2:["Не пить алкоголь за 48 часов до сдачи","Тапсырудан 48 сағат бұрын алкоголь ішпеңіз","No alcohol for 48 hours before"],
+r3:["Взять с собой удостоверение личности","Жеке куәлікті ала жүріңіз","Bring an ID"],
+postT:["Для больниц: опубликовать объявление","Ауруханаларға: хабарландыру жариялау","For hospitals: post a request"],
+fGrp:["Группа крови","Қан тобы","Blood group"],fUn:["Сколько единиц","Неше бірлік","Units needed"],fUrg:["Срочность","Шұғылдық","Urgency"],fPost:["Опубликовать","Жариялау","Publish"],
+yours:["Ваше объявление","Сіздің хабарландыру","Your post"],none:["Объявлений для этой группы нет.","Бұл топқа хабарландыру жоқ.","No requests for this group."],
+pcs:["шт","дана","pcs"],south:["Юг — горы","Оңтүстік — таулар","South — mountains"],
+tL:["Лаборатории","Зертханалар","Laboratories"],tX:["Диагностика","Диагностика","Diagnostics"],tT:["Стоматология","Стоматология","Dentistry"],tP:["Диспансеры","Диспансерлер","Dispensaries"],
+lH:["Лаборатории: цены, запись, результаты","Зертханалар: баға, жазылу, нәтиже","Labs: prices, booking, results"],
+xH:["Диагностика: МРТ, КТ, УЗИ, рентген","Диагностика: МРТ, КТ, УЗИ, рентген","Diagnostics: MRI, CT, ultrasound, X-ray"],
+dH:["Стоматологии: найти врача и узнать цену","Стоматология: дәрігер табу және баға","Dentists: find a clinic and see prices"],
+pH:["Диспансеры рядом","Жақын маңдағы диспансерлер","Dispensaries nearby"],
+nL:["Ближайшая лаборатория","Ең жақын зертхана","Nearest lab"],nX:["Ближайший центр диагностики","Ең жақын диагностика орталығы","Nearest diagnostic center"],nT:["Ближайшая клиника","Ең жақын клиника","Nearest dental clinic"],nP:["Ближайший диспансер","Ең жақын диспансер","Nearest dispensary"],
+cph:["Поиск по названию","Атауы бойынша іздеу","Search by name"],
+cDemo:["Цены тоже демонстрационные.","Бағалар да демонстрациялық.","Prices are demo values too."],
+osm:["Демо-данные: организации, адреса, телефоны и маршруты сгенерированы для показа и не соответствуют реальным местам. Для настоящих данных нужно подключить базу организаций.","Демо-деректер: ұйымдар, мекенжайлар, телефондар мен бағыттар көрсету үшін жасалған және нақты орындарға сәйкес келмейді. Нақты деректер үшін ұйымдар базасын қосу керек.","Demo data: organizations, addresses, phones and routes are generated for illustration and do not match real places. Connect a real facility database for live data."],
+gX:["Диагностический центр — уточните услуги","Диагностикалық орталық — қызметтерін нақтылаңыз","Diagnostic center — ask about services"],gD:["Диспансер","Диспансер","Dispensary"],
+book:["Записаться","Жазылу","Book"],myRec:["Мои записи и результаты","Менің жазылуларым мен нәтижелерім","My bookings & results"],
+bkT:["Запись на сдачу анализов","Талдау тапсыруға жазылу","Book a lab visit"],bDate:["Дата","Күні","Date"],bTime:["Время","Уақыты","Time"],bAn:["Анализы","Талдаулар","Tests"],bName:["Ваше имя","Атыңыз","Your name"],bTel:["Телефон","Телефон","Phone"],
+bTot:["Итого: {n}","Барлығы: {n}","Total: {n}"],bSend:["Записаться","Жазылу","Book"],
+bErr:["Укажите имя, телефон (от 10 цифр) и хотя бы один анализ.","Атыңызды, телефонды (10 саннан кем емес) және кемінде бір талдауды көрсетіңіз.","Enter your name, a phone number (10+ digits) and at least one test."],
+bOk:["Вы записаны! Код заказа: {c}","Сіз жазылдыңыз! Тапсырыс коды: {c}","You are booked! Order code: {c}"],
+bOk2:["Покажите код в лаборатории. Демо: запись хранится только на этом устройстве — для подтверждения позвоните в лабораторию.","Кодты зертханада көрсетіңіз. Демо: жазылу осы құрылғыда ғана сақталады — растау үшін зертханаға қоңырау шалыңыз.","Show the code at the lab. Demo: the booking is stored on this device only — call the lab to confirm."],
+bW:["Ожидает сдачи","Тапсыруды күтуде","Awaiting visit"],bP:["В работе","Жұмыста","In progress"],bR:["Результаты готовы","Нәтиже дайын","Results ready"],
+bRn:["Результаты появятся здесь, когда лаборатория передаст их в DARMEN. Сейчас это демо.","Нәтижелер зертхана DARMEN-ге бергенде осында шығады. Қазір бұл демо.","Results will appear here once the lab sends them to DARMEN. This is a demo."],
+sim:["Демо: сделать готовым","Демо: дайын ету","Demo: mark as ready"],cancel:["Отменить запись","Жазылуды болдырмау","Cancel booking"],
+noBk:["Записей пока нет. Найдите лабораторию и нажмите «Записаться».","Жазылу әлі жоқ. Зертхана тауып, «Жазылу» басыңыз.","No bookings yet. Find a lab and press “Book”."]
+};
+Object.assign(D,{
+pNear:["Ближайшая аптека","Ең жақын дәріхана","Nearest pharmacy"],
+pNearM:["Ближайшая, где есть {m}","{m} бар ең жақын дәріхана","Nearest with {m} in stock"],
+noSt2:["Нет в наличии","Қолда жоқ","Out of stock"],
+noHd:["Нет в наличии: {n}","Қолда жоқ: {n}","Out of stock: {n}"],
+nearTag:["Ближайшая","Ең жақын","Nearest"],
+inN2:["{m} — есть в {n} из {t} аптек","{m} — {t} дәріхананың {n}-інде бар","{m} — in stock at {n} of {t} pharmacies"],
+hintM:["Введите название лекарства — покажу, в каких аптеках оно есть, где нет и по какой цене. Сейчас показаны все аптеки рядом.","Дәрінің атауын енгізіңіз — қай дәріханада бар, қайсысында жоқ және бағасын көрсетемін. Қазір жақын маңдағы барлық дәріханалар көрсетілген.","Type a medicine name to see which pharmacies have it, which do not, and the prices. All nearby pharmacies are shown for now."],
+pMeds:["Лекарства в наличии и цены","Қолда бар дәрілер мен бағалар","Medicines in stock and prices"],
+mapIn:["{m}: в наличии, {p}","{m}: бар, {p}","{m}: in stock, {p}"],
+mapOut:["{m}: нет в наличии","{m}: қолда жоқ","{m}: out of stock"]
+});
+let LI=0;const t=(k,v)=>{let s=(D[k]||[k,k,k])[LI];for(const a in v)s=s.replace("{"+a+"}",v[a]);return s};
+const tl={а:"a",б:"b",в:"v",г:"g",д:"d",е:"e",ё:"e",ж:"zh",з:"z",и:"i",й:"y",к:"k",л:"l",м:"m",н:"n",о:"o",п:"p",р:"r",с:"s",т:"t",у:"u",ф:"f",х:"kh",ц:"ts",ч:"ch",ш:"sh",щ:"sch",ъ:"",ы:"y",ь:"",э:"e",ю:"yu",я:"ya",ә:"a",і:"i",ң:"n",ғ:"g",ү:"u",ұ:"u",қ:"k",ө:"o",һ:"h"};
+const tr=s=>LI===2?s.replace(/[а-яёәіңғүұқөһ]/gi,c=>{const l=tl[c.toLowerCase()]??c;return c===c.toLowerCase()?l:l[0].toUpperCase()+l.slice(1)}):s;
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+const ST0=["Абая","Достык","Республики","Тауелсиздик","Женис","Аль-Фараби","Назарбаева","Бейбитшилик","Сатпаева","Мира","Ленина","Гагарина"];
+const CITIES={
+almaty:{c:[43.2389,76.9455],code:"727",n:["Алматы","Алматы","Almaty"],st:["Абая","Толе би","Достык","Жандосова","Аль-Фараби","Раимбека","Сатпаева","Самал-2","Рыскулова","Навои","Назарбаева","Момышулы"]},
+astana:{c:[51.1282,71.4304],code:"7172",n:["Астана","Астана","Astana"],st:["Кенесары","Республики","Сарыарка","Мангилик Ел","Кабанбай батыра","Туран","Бейбитшилик","Сыганак","Богенбай батыра","Победы","Достык","Иманова"]},
+shymkent:{c:[42.3417,69.5901],code:"7252",n:["Шымкент","Шымкент","Shymkent"],st:["Тауке хана","Кунаева","Байтурсынова","Жибек Жолы","Адырбекова","Рыскулова","Аль-Фараби","Желтоксан","Сайрамская","Казыбек би","Мадели кожа","Тюлькубасская"]},
+karaganda:{c:[49.8047,73.1094],code:"7212",n:["Караганда","Қарағанды","Karaganda"],st:ST0},
+aktobe:{c:[50.2839,57.167],code:"7132",n:["Актобе","Ақтөбе","Aktobe"],st:ST0},
+taraz:{c:[42.9,71.3667],code:"7262",n:["Тараз","Тараз","Taraz"],st:ST0},
+pavlodar:{c:[52.2873,76.9674],code:"7182",n:["Павлодар","Павлодар","Pavlodar"],st:ST0},
+oskemen:{c:[49.9483,82.6283],code:"7232",n:["Усть-Каменогорск","Өскемен","Oskemen"],st:ST0},
+semey:{c:[50.4111,80.2275],code:"7222",n:["Семей","Семей","Semey"],st:ST0},
+atyrau:{c:[47.0945,51.9238],code:"7122",n:["Атырау","Атырау","Atyrau"],st:ST0},
+kostanay:{c:[53.2198,63.6354],code:"7142",n:["Костанай","Қостанай","Kostanay"],st:ST0},
+kyzylorda:{c:[44.8488,65.4823],code:"7242",n:["Кызылорда","Қызылорда","Kyzylorda"],st:ST0},
+aktau:{c:[43.6532,51.1975],code:"7292",n:["Актау","Ақтау","Aktau"],st:ST0},
+oral:{c:[51.2278,51.3865],code:"7112",n:["Уральск","Орал","Oral"],st:ST0},
+petropavl:{c:[54.8667,69.15],code:"7152",n:["Петропавловск","Петропавл","Petropavl"],st:ST0},
+turkistan:{c:[43.2973,68.2517],code:"72533",n:["Туркестан","Түркістан","Turkistan"],st:ST0}
+};
+const CK=Object.keys(CITIES);
+const PHD=[["Айсулу",[8,22],.001,-.011],["Фармация Центр",0,.016,-.009],["Алем Фарм",[8,23],-.001,.018],["Нур Аптека",[9,21],-.011,-.058],["Дәрі-Дәрмек",[8,22],-.021,-.012],["Мед Плюс",0,.034,.014],["Шипагер",[8,21],-.004,-.002],["Эко Аптека",[9,22],-.008,.016],["Береке Фарм",[8,20],.04,-.035],["Жас Дәрі",[9,21],-.032,-.068],["Фарм Экспресс",0,.01,.007],["Дарыхана 24",0,-.003,.04]];
+const FD=[["h",1,.004,-.02],["c",5,-.015,.012],["h",7,.025,.035],["c",12,-.03,-.045],["h",3,.012,.002],["c",9,.032,-.03],["h",4,-.008,.05],["c",21,-.04,.02]];
+const AN=[[0,"O−",4,"u",12,"op"],[2,"A+",3,"u",35,"op"],[1,"B+",2,"t",90,"tr"],[4,"AB−",1,"u",8,"em"],[6,"O+",5,"t",150,"op"],[3,"A−",2,"p",300,"tr"]];
+const GR=["O−","O+","A−","A+","B−","B+","AB−","AB+"];
+const MD=[[["Парацетамол","Парацетамол","Paracetamol"],450],[["Нурофен","Нурофен","Nurofen"],1890],[["Аспирин","Аспирин","Aspirin"],1250],[["Амоксициллин","Амоксициллин","Amoxicillin"],1620],[["Цитрамон","Цитрамон","Citramon"],520],[["Но-шпа","Но-шпа","No-Spa"],1790],[["Мезим форте","Мезим форте","Mezym Forte"],1480],[["Ренни","Ренни","Rennie"],1950],[["Лоратадин","Лоратадин","Loratadine"],690],[["Омепразол","Омепразол","Omeprazole"],1350],[["Терафлю","Терафлю","Theraflu"],2790],[["Активированный уголь","Активтендірілген көмір","Activated charcoal"],190]];
+
+const S={city:"almaty",lang:"ru",fac:true,ft:"all"};
+let me=null,out=false,cur=null,sort="d",sel=null,tab="meds",dg="*",openA=null;
+const mem={};const st={get(k){try{return localStorage.getItem(k)}catch(e){return mem[k]||null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){mem[k]=v}}};
+try{Object.assign(S,JSON.parse(st.get("dg_set")||"{}"))}catch(e){}
+if(!CITIES[S.city])S.city="almaty";
+const save=()=>st.set("dg_set",JSON.stringify(S));
+const ci=()=>CK.indexOf(S.city),C=()=>CITIES[S.city];
+const mname=m=>m[0][LI];
+const PH=()=>PHD.map((p,i)=>({id:i,name:tr(p[0]),addr:tr(C().st[i])+", "+(10+i*7),lat:me.lat+p[2]*.5,lng:me.lng+p[3]*.5,hrs:p[1]?`${String(p[1][0]).padStart(2,"0")}:00–${p[1][1]}:00`:t("h24")}));
+const FAC=()=>FD.map((f,i)=>{const n=String(1000000+((i+1)*7919311+ci()*1234567)%8999999);return{id:i,k:f[0],name:t(f[0]==="h"?"hosp":"clin")+" №"+f[1],addr:tr(C().st[(i+3)%12])+", "+(5+i*9),lat:C().c[0]+f[2],lng:C().c[1]+f[3],tel:`+7 (${C().code}) ${n.slice(0,3)}-${n.slice(3,5)}-${n.slice(5,7)}`}});
+function stock(pi,mi){const h=((pi+1+ci()*13)*2654435761^(mi+1)*40503)>>>0;if(h%10>6)return null;return{price:Math.round(MD[mi][1]*(0.9+(h%25)/100)/10)*10,few:h%7===0,qty:(h%5)+2}}
+function dist(a,b,c,d){const R=6371,r=x=>x*Math.PI/180,dl=r(c-a),dg=r(d-b),x=Math.sin(dl/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(x))}
+const km=d=>d<1?Math.round(d*1000)+(LI===2?" m":" м"):d.toFixed(1).replace(".",LI===2?".":",")+(LI===2?" km":" км");
+const money=n=>n.toLocaleString(LI===2?"en-US":"ru-RU")+" ₸";
+const px=(lat,lng)=>[(lng-(C().c[1]-.09))/.18*800,(1-(lat-(C().c[0]-.048))/.096)*560];
+const meD=()=>me;
+const dd=(lat,lng)=>{const m=meD();return dist(m.lat,m.lng,lat,lng)};
+const telc=s=>String(s).replace(/[^+\d]/g,"");
+
+function setLang(l){S.lang=l;LI=["ru","kk","en"].indexOf(l);save();document.documentElement.lang=l;$("#hl").value=l;statics();if(!$("#s-app").classList.contains("hide"))renderAll()}
+function statics(){
+  document.querySelectorAll("[data-i]").forEach(e=>e.textContent=t(e.dataset.i));
+  $("#q").placeholder=t("ph");$("#hq").placeholder=t("hph");
+  $("#meds").innerHTML=MD.map(m=>`<option value="${esc(mname(m))}">`).join("");
+  $("#gc").innerHTML=CK.map(k=>`<option value="${k}" ${k===S.city?"selected":""}>${CITIES[k].n[LI]}</option>`).join("");
+}
+$("#hl").onchange=e=>setLang(e.target.value);
+$("#gc").onchange=e=>{S.city=e.target.value;save()};
+
+/* геолокация */
+function enter(){$("#s-geo").classList.add("hide");$("#s-app").classList.remove("hide");loadAround(me.lat,me.lng,5000,true);renderAll();if(tab==="hosp")setTimeout(()=>LM&&LM.invalidateSize(),60)}
+$("#geoBtn").onclick=()=>{
+  const e=$("#geoErr");e.style.color="var(--muted)";e.textContent=t("geoW");
+  if(!navigator.geolocation){e.style.color="";e.textContent=t("geoE");return}
+  navigator.geolocation.getCurrentPosition(p=>{gotGps(p);e.textContent="";enter()},()=>{e.style.color="";e.textContent=t("geoE")},{timeout:12000,enableHighAccuracy:true,maximumAge:30000});
+};
+function gotGps(p){
+  const lat=p.coords.latitude,lng=p.coords.longitude;let best=null,bd=1e9;
+  for(const k of CK){const c=CITIES[k].c,d=dist(lat,lng,c[0],c[1]);if(d<bd){bd=d;best=k}}
+  if(bd<60){S.city=best;save()}
+  out=false;
+  me={lat,lng,acc:p.coords.accuracy,gps:true};
+}
+$("#geoSkip").onclick=()=>{toCenter();enter()};
+function toCenter(){out=false;me={lat:C().c[0],lng:C().c[1],manual:true}}
+
+/* вкладки */
+function setTab(x){if(x!==tab){cq="";$("#cq").value="";csm="";cpk=false;$("#cmap").classList.remove("pick");if(crL&&CM){CM.removeLayer(crL);crL=null}$("#cpanel").classList.add("hide");csel=null}tab=x;["meds","hosp","cat","don","set"].forEach(k=>$("#v-"+k).classList.toggle("hide",k!==(CAT[x]?"cat":x)));renderAll();if(x==="hosp")setTimeout(()=>{if(LM){LM.invalidateSize();renderHosp(true,true)}},80);if(x==="meds")setTimeout(()=>MM&&MM.invalidateSize(),60);if(CAT[x])setTimeout(()=>CM&&CM.invalidateSize(),60)}
+function renderTabs(){$("#tabs").innerHTML=[["meds","tM"],["hosp","tH"],["lab","tL"],["dx","tX"],["dent","tT"],["dis","tP"],["don","tD"],["set","tS"]].map(([k,l])=>`<button class="tab" role="tab" data-k="${k}" aria-selected="${tab===k}">${t(l)}</button>`).join("")}
+$("#tabs").onclick=e=>{const b=e.target.closest(".tab");if(b)setTab(b.dataset.k)};
+function renderAll(){renderTabs();if(tab==="meds")renderMeds();if(tab==="hosp")renderHosp();if(tab==="don")renderDon();if(tab==="set")renderSet();if(CAT[tab])renderCat(1)}
+
+/* ЛЕКАРСТВА (демо-цены; больницы — реальные из OpenStreetMap) */
+function nearestFac(){const f=real.filter(x=>x.k!=="p"&&(S.ft==="all"||S.ft==="p"||x.k===S.ft)).map(x=>({...x,d:dist(me.lat,me.lng,x.lat,x.lng)}));f.sort((a,b)=>a.d-b.d);return f[0]}
+/* ЛЕКАРСТВА: реалистичная карта аптек (цены и наличие — демо) */
+$("#sform").onsubmit=e=>{e.preventDefault();const q=$("#q").value.trim().toLowerCase();
+  cur=q?MD.findIndex(m=>m[0].some(n=>n.toLowerCase().includes(q))):null;sel=null;renderMeds(true)};
+$("#chips").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;cur=+b.dataset.m;$("#q").value=mname(MD[cur]);sel=null;renderMeds(true)};
+$("#sortD").onclick=()=>{sort="d";renderMeds()};$("#sortP").onclick=()=>{sort="p";renderMeds()};
+let MM=null,mlayer=null,mme=null,mroute=null,mmk={},mfit=true,mpick=false,mrmode="foot",mdest=null,mcity=null;
+const TILES="https://tile.openstreetmap.org/{z}/{x}/{y}.png",GREY="#8A9BA3";
+window.MAPCFG=()=>({streets:C().st.map(tr),words:PHD.map(p=>tr(p[0])),park:LI===2?"Park":LI===1?"Саябақ":"Парк",m:LI===2?"m":"м",km:LI===2?"km":"км"});
+function initMM(){
+  if(MM)return true;
+  if(!window.L){$("#mmap").innerHTML=`<div class="empty" style="margin:16px">${t("leafErr")}</div>`;return false}
+  const m=meD();MM=L.map("mmap",{real:true}).setView([m.lat,m.lng],14);
+  L.tileLayer(TILES,{maxZoom:19}).addTo(MM);mlayer=L.layerGroup().addTo(MM);mme=L.layerGroup().addTo(MM);
+  MM.on("click",e=>{if(!mpick)return;mpick=false;$("#mmap").classList.remove("pick");me={lat:e.latlng.lat,lng:e.latlng.lng,manual:true};out=false;
+    if(mroute){MM.removeLayer(mroute);mroute=null;$("#mpanel").classList.add("hide")}loadAround(me.lat,me.lng,5000,true);renderMeds()});
+  return true;
+}
+const pinSvg=(c,g)=>`<svg width="30" height="42" viewBox="0 0 30 42"><path d="M15 1.5C7.5 1.5 1.5 7.4 1.5 14.7c0 9.9 13.5 25.8 13.5 25.8s13.5-15.9 13.5-25.8C28.5 7.4 22.5 1.5 15 1.5z" fill="${c}" stroke="#fff" stroke-width="2"/><circle cx="15" cy="14.5" r="7.2" fill="#fff"/>${g(c)}</svg>`;
+const G_PLUS=c=>`<path d="M11.4 14.5h7.2M15 10.9v7.2" stroke="${c}" stroke-width="2.4" stroke-linecap="round"/>`,
+  G_OK=c=>`<path d="M11.3 14.8l2.7 2.7 4.8-5.4" fill="none" stroke="${c}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`,
+  G_NO=c=>`<path d="M12 11.5l6 6M18 11.5l-6 6" stroke="${c}" stroke-width="2.4" stroke-linecap="round"/>`;
+function pIcon(o){return L.divIcon({className:"",html:`<div class="pn${o.on?" on":""}">${o.pill?`<span class="pl" style="border-color:${o.c};${o.fill?`background:${o.c};color:#fff`:""}">${esc(o.pill)}</span>`:""}${pinSvg(o.c,o.g)}</div>`,iconSize:[30,42],iconAnchor:[15,42],popupAnchor:[0,-44]})}
+function meMk(){mme.clearLayers();const m=meD();
+  L.marker([m.lat,m.lng],{icon:L.divIcon({className:"",html:`<div style="display:flex;align-items:center;gap:6px;transform:translate(-9px,-9px)"><div class="meDot"></div><span class="meLbl">${t(me.gps&&!out?"here":"manual")}</span></div>`,iconSize:[0,0]}),zIndexOffset:1000,keyboard:false}).addTo(mme);
+  if(me.gps&&!out&&me.acc&&me.acc<2000)L.circle([m.lat,m.lng],{radius:me.acc,color:"#2F6BFF",weight:1,fillOpacity:.08}).addTo(mme)}
+function pPop(x,has){
+  const p=x.p,rows=MD.map((m,i)=>({m,i,s:stock(p.id,i)})).sort((a,b)=>(!!b.s)-(!!a.s));
+  const top=has?(x.s?`<div class="ok2">✅ ${t("mapIn",{m:mname(MD[cur]),p:money(x.s.price)})}${x.s.few?" · "+t("few",{n:x.s.qty}):""}</div>`:`<div class="no2">❌ ${t("mapOut",{m:mname(MD[cur])})}</div>`):"";
+  return `<div class="pop"><b>${esc(p.name)}</b><div>📍 ${esc(p.addr)} · ${km(x.d)}</div><div>🕘 ${p.hrs}</div>${top}
+  <div class="mh">${t("pMeds")}</div><div class="mlist">${rows.map(r=>`<div class="mr${r.i===cur?" cu":""}${r.s?"":" off"}"><span>${esc(mname(r.m))}</span><b>${r.s?money(r.s.price):"—"}</b></div>`).join("")}</div>
+  <div class="acts"><button class="btn sm" type="button" onclick="routeP(${p.id})">${t("route")}</button><a class="btn sm ghost" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking" target="_blank" rel="noopener noreferrer">${t("nav")}</a></div></div>`}
+function mhl(){document.querySelectorAll("#list .ph[data-i]").forEach(e=>e.setAttribute("aria-current",+e.dataset.i===sel));Object.entries(mmk).forEach(([id,m])=>m.setIcon(m.__ic(+id===sel)))}
+function mFocus(id){const m=mmk[id];if(!m||!MM)return;MM.setView([m.ll.lat,m.ll.lng],Math.max(MM.getZoom(),15));m.openPopup()}
+function pickCard(id){sel=id;mhl();mFocus(id);const c=document.querySelector('#list .ph[data-i="'+id+'"]');if(c&&c.scrollIntoView)c.scrollIntoView({block:"nearest"})}
+function renderMeds(fit){
+  if(fit)mfit=true;if(mcity!==S.city){mcity=S.city;mfit=true}
+  const nf=cur===-1,has=cur!=null&&cur>=0;
+  $("#chips").innerHTML=[0,1,5,8,6].map(i=>`<button type="button" class="chip" data-m="${i}" aria-pressed="${cur===i}">${esc(mname(MD[i]))}</button>`).join("");
+  $("#sortD").textContent=t("near");$("#sortP").textContent=t("cheap");
+  $("#sortD").setAttribute("aria-pressed",sort==="d");$("#sortP").setAttribute("aria-pressed",sort==="p");$("#sortP").classList.toggle("hide",!has);
+  const nfac=S.fac?nearestFac():null,b=$("#banner");b.classList.toggle("hide",!nfac);
+  if(nfac)b.innerHTML=`<b>${t(S.ft==="h"?"nh":S.ft==="c"?"nc":"na")}:</b> ${esc(nfac.name||t(KL[nfac.k]))} · ${km(nfac.d)}${nfac.phone?` · <a href="tel:${telc(nfac.phone)}" style="color:var(--brand);font-weight:700">${esc(nfac.phone)}</a>`:""}`;
+  const all=PH().map(p=>({p,s:has?stock(p.id,cur):null,d:dd(p.lat,p.lng)})),byD=(a,b)=>a.d-b.d;
+  const yes=has?all.filter(x=>x.s):all.slice(),no=has?all.filter(x=>!x.s).sort(byD):[];
+  yes.sort((a,b)=>sort==="p"&&has?(a.s.price-b.s.price)||(a.d-b.d):a.d-b.d);
+  const near=[...yes].sort(byD)[0]||null,minP=has&&yes.length?Math.min(...yes.map(x=>x.s.price)):0;
+  $("#lh").textContent=nf?t("nf"):has?t("inN2",{m:mname(MD[cur]),n:yes.length,t:all.length}):t("all");
+  const card=(x,off)=>`<button class="ph${off?" off":""}" data-i="${x.p.id}" aria-current="${sel===x.p.id}">
+    <div class="top"><span class="name">${esc(x.p.name)}</span>${has&&!off?`<span class="price ${x.s.price===minP?"low":""}">${money(x.s.price)}</span>`:`<span class="meta">${km(x.d)}</span>`}</div>
+    <div class="meta">${esc(x.p.addr)} · ${has&&!off?km(x.d)+" · ":""}${x.p.hrs}</div>
+    ${off?`<span class="tag red">${t("noSt2")}</span>`:has?`<span class="tag ${x.s.few?"few":""}">${x.s.few?t("few",{n:x.s.qty}):t("inS")}</span>${x.s.price===minP?` <span class="tag">${t("low")}</span>`:""}`:""}${near&&x.p.id===near.p.id&&!off?` <span class="tag blue">${t("nearTag")}</span>`:""}</button>`;
+  $("#list").innerHTML=nf?`<div class="empty">${t("nfT")}</div>`:!yes.length?`<div class="empty">${t("noSt")}</div>`+(no.length?`<div class="sep">${t("noHd",{n:no.length})}</div>`+no.map(x=>card(x,1)).join(""):""):
+    (!has?`<div class="empty" style="padding:12px 16px;font-size:14px">${t("hintM")}</div>`:"")+yes.map(x=>card(x,0)).join("")+(no.length?`<div class="sep">${t("noHd",{n:no.length})}</div>`+no.map(x=>card(x,1)).join(""):"");
+  $("#list").onclick=e=>{const k=e.target.closest(".ph");if(k)pickCard(+k.dataset.i)};
+  const pb=$("#pbanner"),n0=[...all].sort(byD)[0];pb.classList.toggle("hide",!n0);
+  if(n0)pb.innerHTML=`<b>${t("pNear")}:</b> <a href="#" data-p="${n0.p.id}" style="color:var(--brand);font-weight:700">${esc(n0.p.name)}</a> · ${km(n0.d)} · ${n0.p.hrs}`+
+    (has&&near?`<br><b>${t("pNearM",{m:mname(MD[cur])})}:</b> <a href="#" data-p="${near.p.id}" style="color:var(--brand);font-weight:700">${esc(near.p.name)}</a> · ${km(near.d)} · ${money(near.s.price)}`:"");
+  pb.onclick=e=>{const a=e.target.closest("[data-p]");if(a){e.preventDefault();pickCard(+a.dataset.p)}};
+  $("#mtools").innerHTML=`<button class="chip" type="button" data-a="loc">◎ ${t("myLoc")}</button><button class="chip" type="button" data-a="pick" aria-pressed="${mpick}">${t("pick")}</button>`;
+  $("#note").textContent=(out?t("out")+" ":"")+t("demo");
+  if(!initMM())return;
+  mlayer.clearLayers();mmk={};
+  if(S.fac)real.filter(f=>f.k!=="p"&&(S.ft==="all"||S.ft==="p"||f.k===S.ft)).forEach(f=>{
+    const mk=L.marker([f.lat,f.lng],{icon:L.divIcon({className:"",html:`<div class="mk ${f.k}" style="background:${IC[f.k][0]};width:20px;height:20px;font-size:12px">${IC[f.k][1]}</div>`,iconSize:[20,20],iconAnchor:[10,10]}),title:nameOf(f),zIndexOffset:-500});
+    mk.on("click",()=>{selR=f.id;setTab("hosp")});mk.addTo(mlayer)});
+  all.forEach(x=>{
+    const isN=near&&x.p.id===near.p.id,pill=has?(x.s?money(x.s.price):t("noSt2")):(n0&&x.p.id===n0.p.id?t("nearTag"):"");
+    const ic=on=>pIcon(has?(x.s?{c:on?"var(--accent)":"var(--ok)",g:G_OK,pill,fill:isN,on}:{c:on?"var(--accent)":GREY,g:G_NO,pill,on}):{c:on?"var(--accent)":"var(--brand)",g:G_PLUS,pill,fill:!!pill,on});
+    const mk=L.marker([x.p.lat,x.p.lng],{icon:ic(sel===x.p.id),title:x.p.name,zIndexOffset:(x.s||!has)?(isN||(n0&&n0.p.id===x.p.id&&!has)?300:200):0}).bindPopup(pPop(x,has),{maxWidth:300});
+    mk.__ic=ic;mk.on("click",()=>{sel=x.p.id;mhl();const c=document.querySelector('#list .ph[data-i="'+x.p.id+'"]');if(c&&c.scrollIntoView)c.scrollIntoView({block:"nearest"})});mk.addTo(mlayer);mmk[x.p.id]=mk});
+  meMk();
+  if(mfit){mfit=false;const m=meD(),pts=[...all].map(x=>[x.p.lat,x.p.lng]);pts.push([m.lat,m.lng]);MM.fitBounds(L.latLngBounds(pts),{padding:[50,50],maxZoom:16})}
+}
+$("#mtools").onclick=e=>{const b=e.target.closest("[data-a]");if(!b||!me)return;
+  if(b.dataset.a==="pick"){mpick=!mpick;$("#mmap").classList.toggle("pick",mpick);$("#pbanner").classList.toggle("hide",mpick);$("#note").textContent=mpick?t("pickHint"):"";if(!mpick)renderMeds();else $("#mtools").querySelector('[data-a="pick"]').setAttribute("aria-pressed","true")}
+  else if(!navigator.geolocation){$("#note").textContent=t("locErr")}
+  else{$("#note").textContent=t("geoW");navigator.geolocation.getCurrentPosition(p=>{gotGps(p);mfit=true;loadAround(me.lat,me.lng,5000,true);renderMeds()},()=>{$("#note").textContent=t("locErr")},{timeout:12000,enableHighAccuracy:true})}};
+async function osrmReal(mode,a,b){
+  try{return await Promise.race([osrmNet(mode,a,b),new Promise((_,j)=>setTimeout(()=>j(new Error("t")),6000))])}
+  catch(e){const r=L.route(a,b);return{geometry:{type:"LineString",coordinates:r.coords},distance:r.dist,duration:r.dist/(mode==="foot"?1.35:7.5)}}}
+async function routeP(id){
+  const p=PH().find(z=>z.id===id);if(!p||!MM)return;mdest=id;MM.closePopup();const pn=$("#mpanel");pn.classList.remove("hide");pn.textContent=t("loading");
+  const chips=`<div class="chips" style="margin:8px 0 0"><button class="chip" data-m="foot" aria-pressed="${mrmode==="foot"}">${t("walk")}</button><button class="chip" data-m="car" aria-pressed="${mrmode==="car"}">${t("drive")}</button><button class="chip" data-m="x">${t("clearRoute")}</button></div>`;
+  try{const r=await osrmReal(mrmode,meD(),p);if(mroute)MM.removeLayer(mroute);
+    mroute=L.geoJSON(r.geometry,{style:{color:"#0B7F8C",weight:6,opacity:.9}}).addTo(MM);MM.fitBounds(mroute.getBounds(),{padding:[50,50],maxZoom:17});
+    pn.innerHTML=`<b>${esc(p.name)}</b><br>${t("routeInfo",{d:km(r.distance/1000),t:fmtMin(Math.max(1,Math.round(r.duration/60)))})}${chips}`}
+  catch(e){pn.innerHTML=`${t("routeErr")}${chips}`}}
+$("#mpanel").onclick=e=>{const b=e.target.closest("[data-m]");if(!b)return;if(b.dataset.m==="x"){if(mroute&&MM)MM.removeLayer(mroute);mroute=null;mdest=null;$("#mpanel").classList.add("hide")}else{mrmode=b.dataset.m;routeP(mdest)}};
+const zip=o=>{const[x,y]=px(o.lat,o.lng);return{x,y}};
+
+/* ===================== НАСТОЯЩАЯ КАРТА: Leaflet + OSM + Overpass + OSRM ===================== */
+const OV=["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter","https://overpass.private.coffee/api/interpreter"];
+const KL={h:"hosp",c:"clin",p:"pharm"},KP={h:"hosps",c:"clins",p:"pharms"};
+let LM=null,layer=null,meLayer=null,routeL=null,real=[],markers={},selR=null,mf=["all","h","c"].includes(S.ft)?S.ft:"all",hq="",picking=false,loading=false,rerr=false,rmode="foot",rdest=null,stMsg="";
+
+async function ovpNet(q){
+  let last;
+  for(const u of OV){
+    const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),30000);
+    try{const r=await fetch(u,{method:"POST",body:"data="+encodeURIComponent(q),headers:{"Content-Type":"application/x-www-form-urlencoded"},signal:ac.signal});clearTimeout(tm);if(!r.ok)throw new Error("HTTP "+r.status);const j=await r.json();return j.elements||[]}
+    catch(e){clearTimeout(tm);last=e}
+  }
+  throw last;
+}
+const TYPES='"amenity"~"^(hospital|clinic|doctors|pharmacy)$"',TYPES2='"healthcare"~"^(hospital|clinic|pharmacy)$"';
+const qAround=(lat,lng,r)=>`[out:json][timeout:25];(nwr[${TYPES}](around:${r},${lat},${lng});nwr[${TYPES2}](around:${r},${lat},${lng}););out center tags 500;`;
+function qName(q,lat,lng){const a=q,b=q.charAt(0).toUpperCase()+q.slice(1).toLowerCase(),c=q.toUpperCase(),re=`(${a}|${b}|${c})`;
+  return `[out:json][timeout:25];(nwr[${TYPES}]["name"~"${re}"](around:40000,${lat},${lng});nwr[${TYPES2}]["name"~"${re}"](around:40000,${lat},${lng}););out center tags 200;`}
+function kind(tg){const a=tg.amenity,h=tg.healthcare;if(a==="hospital"||h==="hospital")return"h";if(a==="pharmacy"||h==="pharmacy")return"p";if(a==="clinic"||a==="doctors"||h==="clinic"||h==="doctor")return"c";return null}
+function parse(els,c){
+  const m=new Map();
+  els.forEach(e=>{const tg=e.tags||{},k=c?"x":kind(tg),lat=e.lat!=null?e.lat:e.center&&e.center.lat,lng=e.lon!=null?e.lon:e.center&&e.center.lon;if(!k||lat==null||lng==null)return;
+    const nm=[tg.name,tg["name:ru"],tg["name:kk"],tg["name:en"],tg.operator,tg.brand].filter(Boolean);
+    const site=tg.website||tg["contact:website"]||"";
+    m.set(e.type+e.id,{id:e.type[0]+e.id,k,lat,lng,tg,all:(nm.join(" ")+" "+(tg["healthcare:speciality"]||"")).toLowerCase(),subs:c?subsOf(tg,nm,c):[],
+      name:tg["name:"+["ru","kk","en"][LI]]||tg.name||tg["name:ru"]||tg["name:en"]||tg.operator||tg.brand||"",
+      addr:tg["addr:full"]||[[tg["addr:street"],tg["addr:housenumber"]].filter(Boolean).join(" "),tg["addr:city"]].filter(Boolean).join(", "),
+      phone:String(tg.phone||tg["contact:phone"]||"").split(/[;,]/)[0].trim(),
+      hours:tg.opening_hours||"",site:/^https?:\/\//i.test(site)?site:""});});
+  return[...m.values()];
+}
+async function loadAround(lat,lng,r,quiet){
+  loading=true;rerr=false;stMsg="";refreshUI();
+  try{real=parse(await ovp(qAround(lat,lng,r)))}catch(e){rerr=true;if(!quiet)real=[]}
+  loading=false;refreshUI(true,true);
+}
+async function searchName(q){
+  q=q.replace(/[^\p{L}\p{N}\s\-№]/gu,"").trim();if(!q)return;
+  loading=true;rerr=false;refreshUI();
+  try{real=parse(await ovp(qName(q,me.lat,me.lng)));hq=q.toLowerCase();loading=false;refreshUI(true,true)}
+  catch(e){rerr=true;loading=false;refreshUI()}
+}
+function refreshUI(redrawMarkers,fit){if(tab==="hosp")renderHosp(redrawMarkers,fit);if(tab==="meds")renderMeds()}
+
+function visible(){
+  return real.filter(x=>(mf==="all"||x.k===mf)&&(!hq||x.all.includes(hq))).map(x=>({...x,d:dist(me.lat,me.lng,x.lat,x.lng)})).sort((a,b)=>a.d-b.d);
+}
+const hrs=x=>x.hours?(x.hours.trim()==="24/7"?t("h24"):x.hours):t("hours0");
+const nameOf=x=>x.name||t(KL[x.k]);
+const tagCls=k=>k==="h"?"red":k==="c"?"blue":"";
+const fmtMin=m=>m>=60?`${Math.floor(m/60)} ${t("hr")} ${m%60} ${t("mn")}`:`${m} ${t("mn")}`;
+const navUrl=x=>`https://www.google.com/maps/dir/?api=1&destination=${x.lat},${x.lng}&travelmode=${rmode==="car"?"driving":"walking"}`;
+function acts(x){
+  return (x.phone?`<a class="btn sm" href="tel:${telc(x.phone)}">${t("call")}</a>`:`<span class="btn sm dis">${t("phone0")}</span>`)+
+    `<button class="btn sm ghost" type="button" onclick="routeTo('${x.id}')">${t("route")}</button>`;
+}
+function popup(x){
+  return `<div class="pop"><b>${esc(nameOf(x))}</b><div><span class="tag ${tagCls(x.k)}">${t(KL[x.k])}</span></div>
+  <div>📍 ${x.addr?esc(x.addr):t("addr0")}</div><div>☎ ${x.phone?`<a href="tel:${telc(x.phone)}">${esc(x.phone)}</a>`:t("phone0")}</div><div>🕘 ${esc(hrs(x))}</div>
+  ${x.site?`<div><a href="${esc(x.site)}" target="_blank" rel="noopener noreferrer">${t("site")}</a></div>`:""}
+  <div class="acts">${acts(x)}<a class="btn sm ghost" href="${navUrl(x)}" target="_blank" rel="noopener noreferrer">${t("nav")}</a></div></div>`;
+}
+const IC={h:["var(--red)","H"],c:["var(--blue)","+"],p:["var(--brand)","+"]};
+const icon=(k,on)=>L.divIcon({className:"",html:`<div class="mk ${k}${on?" on":""}" style="background:${IC[k][0]}">${IC[k][1]}</div>`,iconSize:[28,28],iconAnchor:[14,14],popupAnchor:[0,-16]});
+
+function initMap(){
+  if(LM)return true;
+  if(!window.L){$("#lmap").innerHTML=`<div class="empty" style="margin:16px">${t("leafErr")}</div>`;return false}
+  LM=L.map("lmap",{real:true}).setView([me.lat,me.lng],14);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>"}).addTo(LM);
+  layer=L.layerGroup().addTo(LM);meLayer=L.layerGroup().addTo(LM);
+  LM.on("click",e=>{if(!picking)return;picking=false;$("#lmap").classList.remove("pick");me={lat:e.latlng.lat,lng:e.latlng.lng,manual:true};out=false;drawMe();loadAround(me.lat,me.lng,5000)});
+  return true;
+}
+function drawMe(){
+  if(!LM)return;meLayer.clearLayers();
+  L.marker([me.lat,me.lng],{icon:L.divIcon({className:"",html:`<div style="display:flex;align-items:center;gap:6px;transform:translate(-9px,-9px)"><div class="meDot"></div><span class="meLbl">${t(me.gps?"here":"manual")}</span></div>`,iconSize:[0,0]}),zIndexOffset:1000,keyboard:false}).addTo(meLayer);
+  if(me.gps&&me.acc&&me.acc<2000)L.circle([me.lat,me.lng],{radius:me.acc,color:"#2F6BFF",weight:1,fillOpacity:.08}).addTo(meLayer);
+}
+function renderHosp(redraw,fit){
+  $("#hchips").innerHTML=[["all","fall"],["h","hosps"],["c","clins"],["p","pharms"]].map(([k,l])=>`<button class="chip" data-k="${k}" aria-pressed="${mf===k}">${t(l)}</button>`).join("");
+  $("#htools").innerHTML=`<button class="chip" data-a="refresh">⟳ ${t("refresh")}</button><button class="chip" data-a="here">${t("sHere")}</button><button class="chip" data-a="loc">◎ ${t("myLoc")}</button><button class="chip" data-a="pick" aria-pressed="${picking}">${t("pick")}</button>
+   <select id="hc" aria-label="${t("sCity")}">${CK.map(k=>`<option value="${k}" ${k===S.city?"selected":""}>${CITIES[k].n[LI]}</option>`).join("")}</select>`;
+  const ok=initMap(),v=visible();
+  $("#hstat").textContent=picking?t("pickHint"):loading?t("loading"):rerr?t("loadErr"):stMsg||(real.length?t("found",{n:v.length}):"");
+  $("#hlist").innerHTML=!v.length&&!loading?`<div class="empty">${rerr?t("loadErr"):t("noRes")}</div>`:v.slice(0,120).map(x=>`<div class="ph" data-id="${x.id}" aria-current="${selR===x.id}" role="button" tabindex="0">
+    <div class="top"><span class="name">${esc(nameOf(x))}</span><span class="meta">${km(x.d)}</span></div>
+    <div class="meta">${x.addr?esc(x.addr):t("addr0")}</div><div class="meta">🕘 ${esc(hrs(x))}</div>
+    <span class="tag ${tagCls(x.k)}">${t(KL[x.k])}</span>
+    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">${acts(x)}</div></div>`).join("");
+  $("#hnote").textContent=t("osm");
+  if(!ok)return;
+  drawMe();
+  if(redraw||!Object.keys(markers).length||true){
+    layer.clearLayers();markers={};
+    v.forEach(x=>{const mk=L.marker([x.lat,x.lng],{icon:icon(x.k,selR===x.id),title:nameOf(x)}).bindPopup(popup(x),{maxWidth:290});mk.on("click",()=>{selR=x.id;hlight()});mk.addTo(layer);markers[x.id]=mk});
+    if(fit&&v.length)LM.fitBounds(L.latLngBounds(v.map(x=>[x.lat,x.lng])).extend([me.lat,me.lng]),{padding:[40,40],maxZoom:17});
+    else if(redraw&&!fit)LM.setView([me.lat,me.lng],LM.getZoom()<13?14:LM.getZoom());
+  }
+}
+function hlight(){document.querySelectorAll("#hlist .ph").forEach(e=>e.setAttribute("aria-current",e.dataset.id===selR));Object.entries(markers).forEach(([id,m])=>m.setIcon(icon(real.find(r=>r.id===id).k,id===selR)))}
+function focusItem(id){selR=id;const x=real.find(r=>r.id===id),m=markers[id];if(!x||!LM)return;hlight();LM.setView([x.lat,x.lng],Math.max(LM.getZoom(),16));if(m)m.openPopup()}
+
+$("#hchips").onclick=e=>{const b=e.target.closest(".chip");if(b){mf=b.dataset.k;if(mf!=="p"){S.ft=mf;save()}renderHosp(true,true)}};
+$("#hlist").onclick=e=>{if(e.target.closest("a,button"))return;const c=e.target.closest(".ph");if(c)focusItem(c.dataset.id)};
+$("#hlist").onkeydown=e=>{if(e.key==="Enter"&&e.target.classList.contains("ph"))focusItem(e.target.dataset.id)};
+$("#hform").onsubmit=async e=>{e.preventDefault();const q=$("#hq").value.trim();hq=q.toLowerCase();stMsg="";
+  if(!q){renderHosp(true,true);return}
+  if(visible().length){renderHosp(true,true);return}
+  await searchName(q);if(!visible().length){stMsg=t("noRes");renderHosp()}};
+$("#htools").onclick=e=>{const b=e.target.closest("[data-a]");if(!b||!me)return;const a=b.dataset.a;
+  if(a==="refresh"){loadAround(me.lat,me.lng,5000)}
+  else if(a==="here"&&LM){const c=LM.getCenter(),bd=LM.getBounds(),r=Math.max(1500,Math.min(15000,Math.round(c.distanceTo(bd.getNorthEast()))));me=Object.assign({},me);hq="";$("#hq").value="";loadAround(c.lat,c.lng,r)}
+  else if(a==="loc"){if(!navigator.geolocation){stMsg=t("locErr");renderHosp();return}stMsg=t("geoW");renderHosp();
+    navigator.geolocation.getCurrentPosition(p=>{gotGps(p);stMsg="";loadAround(me.lat,me.lng,5000);if(LM)LM.setView([me.lat,me.lng],15)},()=>{stMsg=t("locErr");renderHosp()},{timeout:12000,enableHighAccuracy:true})}
+  else if(a==="pick"){picking=!picking;$("#lmap").classList.toggle("pick",picking);renderHosp()}};
+$("#htools").onchange=e=>{if(e.target.id!=="hc")return;S.city=e.target.value;save();toCenter();hq="";$("#hq").value="";loadAround(me.lat,me.lng,5000);if(LM)LM.setView([me.lat,me.lng],14)};
+
+/* маршруты: OSRM */
+async function osrmNet(mode,a,b){
+  const co=`${a.lng},${a.lat};${b.lng},${b.lat}?overview=full&geometries=geojson`;
+  const bases=mode==="foot"?["https://routing.openstreetmap.de/routed-foot/route/v1/driving/"]:["https://router.project-osrm.org/route/v1/driving/","https://routing.openstreetmap.de/routed-car/route/v1/driving/"];
+  let last;
+  for(const u of bases){const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),20000);
+    try{const r=await fetch(u+co,{signal:ac.signal});clearTimeout(tm);const j=await r.json();if(j.code==="Ok"&&j.routes&&j.routes[0])return j.routes[0];throw new Error(j.code||"route")}catch(e){clearTimeout(tm);last=e}}
+  throw last;
+}
+async function routeTo(id,mode){
+  const x=real.find(r=>r.id===id);if(!x||!me||!LM)return;if(mode)rmode=mode;rdest=id;
+  LM.closePopup();const p=$("#rpanel");p.classList.remove("hide");p.textContent=t("loading");
+  const chips=`<div class="chips" style="margin:8px 0 0"><button class="chip" data-m="foot" aria-pressed="${rmode==="foot"}">${t("walk")}</button><button class="chip" data-m="car" aria-pressed="${rmode==="car"}">${t("drive")}</button><button class="chip" data-m="x">${t("clearRoute")}</button></div>`;
+  try{const r=await osrmReal(rmode,me,x);if(routeL)LM.removeLayer(routeL);
+    routeL=L.geoJSON(r.geometry,{style:{color:"#0B7F8C",weight:6,opacity:.9}}).addTo(LM);LM.fitBounds(routeL.getBounds(),{padding:[40,40]});
+    p.innerHTML=`<b>${esc(nameOf(x))}</b><br>${t("routeInfo",{d:km(r.distance/1000),t:fmtMin(Math.max(1,Math.round(r.duration/60)))})}${chips}`}
+  catch(e){p.innerHTML=`${t("routeErr")}${chips}`}
+}
+$("#rpanel").onclick=e=>{const b=e.target.closest("[data-m]");if(!b)return;if(b.dataset.m==="x"){if(routeL&&LM)LM.removeLayer(routeL);routeL=null;rdest=null;$("#rpanel").classList.add("hide")}else routeTo(rdest,b.dataset.m)};
+
+/* ДОНОРСТВО (демо) */
+function anns(){
+  let own=[];try{own=JSON.parse(st.get("dg_ann_"+S.city)||"[]")}catch(e){}
+  const base=AN.map((a,i)=>({id:"a"+i,f:a[0],g:a[1],n:a[2],u:a[3],m:a[4],r:a[5]}));
+  return [...own,...base].filter(a=>dg==="*"||a.g===dg);
+}
+const ago=m=>m===0?t("now"):m<60?t("ago",{n:m}):t("agoH",{n:Math.round(m/60)});
+function renderDon(){
+  const F=FAC(),list=anns();
+  $("#v-don").innerHTML=`<div class="don"><div>
+    <h1>${t("dT")}</h1><p class="sub">${t("dS")}</p>
+    <div class="chips"><button class="chip" data-g="*" aria-pressed="${dg==="*"}">${t("dAny")}</button>${GR.map(g=>`<button class="chip" data-g="${g}" aria-pressed="${dg===g}">${g}</button>`).join("")}</div>
+    ${list.length?list.map(a=>{const f=F[a.f]||F[0];const d=dd(f.lat,f.lng);return `<article class="ann ${a.u==="u"?"":a.u}">
+      <div class="row"><div class="grp" aria-hidden="true">${a.g}</div><div class="info">
+        <div class="ttl">${t("dNeed",{g:a.g})}</div>
+        <div style="color:var(--muted);font-size:14px">${f.name} · ${km(d)} · ${t(a.r)} · ${a.own?t("yours"):ago(a.m)}</div>
+        <div><span class="tag ${a.u==="u"?"red":a.u==="t"?"few":""}">${t(a.u)}</span> <span class="tag red">${t("units",{n:a.n})}</span></div></div></div>
+      <div style="margin-top:12px"><button class="btn red sm" data-o="${a.id}">${t("help")}</button></div>
+      ${openA===a.id?`<div class="more"><b>${t("thanks")}</b><p style="margin:8px 0">${f.name}, ${f.addr}</p><a class="btn sm" href="tel:${telc(f.tel)}">${t("call")} · ${f.tel}</a></div>`:""}</article>`}).join(""):`<div class="empty">${t("none")}</div>`}
+    <p class="note">${t("dem2")}</p></div>
+    <aside><div class="card" style="margin-bottom:18px"><h3 style="margin-bottom:8px">${t("rulesT")}</h3><ul style="margin:0;padding-left:20px"><li>${t("r1")}</li><li>${t("r2")}</li><li>${t("r3")}</li></ul></div>
+    <div class="card"><h3 style="margin-bottom:12px">${t("postT")}</h3><form class="post" id="pf">
+      <label>${t("hosp")}<select id="pfH">${F.filter(f=>f.k==="h").map(f=>`<option value="${f.id}">${f.name}</option>`).join("")}</select></label>
+      <label>${t("fGrp")}<select id="pfG">${GR.map(g=>`<option>${g}</option>`).join("")}</select></label>
+      <label>${t("fUn")}<input id="pfN" type="number" min="1" max="20" value="2"></label>
+      <label>${t("fUrg")}<select id="pfU"><option value="u">${t("u")}</option><option value="t">${t("t")}</option><option value="p">${t("p")}</option></select></label>
+      <button class="btn" type="submit">${t("fPost")}</button></form></div></aside></div>`;
+  $("#v-don").onclick=e=>{const g=e.target.closest("[data-g]");if(g){dg=g.dataset.g;renderDon();return}const o=e.target.closest("[data-o]");if(o){openA=openA===o.dataset.o?null:o.dataset.o;renderDon()}};
+  $("#pf").onsubmit=e=>{e.preventDefault();let own=[];try{own=JSON.parse(st.get("dg_ann_"+S.city)||"[]")}catch(x){}
+    own.unshift({id:"o"+Date.now(),f:+$("#pfH").value,g:$("#pfG").value,n:Math.max(1,Math.min(20,+$("#pfN").value||1)),u:$("#pfU").value,m:0,r:"op",own:1});
+    st.set("dg_ann_"+S.city,JSON.stringify(own));dg="*";renderDon()};
+}
+
+/* НАСТРОЙКИ */
+function renderSet(){
+  $("#v-set").innerHTML=`<div class="set"><div class="card"><label for="sc">${t("sCity")}</label><select id="sc">${CK.map(k=>`<option value="${k}" ${k===S.city?"selected":""}>${CITIES[k].n[LI]}</option>`).join("")}</select></div>
+  <div class="card"><label>${t("sLang")}</label><div class="chips">${[["ru","Русский"],["kk","Қазақша"],["en","English"]].map(([k,n])=>`<button class="chip" data-l="${k}" aria-pressed="${S.lang===k}">${n}</button>`).join("")}</div></div>
+  <div class="card"><label>${t("sType")}</label><div class="chips">${[["all","fall"],["h","hosp"],["c","clin"]].map(([k,l])=>`<button class="chip" data-f="${k}" aria-pressed="${S.ft===k}">${t(l)}</button>`).join("")}</div>
+  <label class="chk" style="margin-top:16px"><input type="checkbox" id="sf" ${S.fac?"checked":""}>${t("sFac")}</label></div>
+  <button class="btn ghost" id="sloc">${t("sLoc")}</button></div>`;
+  $("#sc").onchange=e=>{S.city=e.target.value;save();toCenter();hq="";loadAround(me.lat,me.lng,5000);if(LM)LM.setView([me.lat,me.lng],14);renderSet()};
+  $("#sf").onchange=e=>{S.fac=e.target.checked;save()};
+  $("#v-set").onclick=e=>{const l=e.target.closest("[data-l]");if(l){setLang(l.dataset.l);return}const f=e.target.closest("[data-f]");if(f){S.ft=f.dataset.f;mf=S.ft;save();renderSet();return}
+    if(e.target.closest("#sloc")){$("#s-app").classList.add("hide");$("#s-geo").classList.remove("hide")}};
+}
+
+/* схема на вкладке «Лекарства» (демо-аптеки) */
+function drawMap(svg,items,cb){
+  let s=`<rect width="800" height="560" fill="var(--map)"/><path d="M0 470 Q120 430 230 465 T450 450 T650 470 T800 440 V560 H0Z" fill="var(--mount)"/>
+  <text x="400" y="535" text-anchor="middle" font-size="14" fill="var(--muted)" font-weight="600">${t("south")}</text><g stroke="var(--street)" stroke-width="7" fill="none" stroke-linecap="round">`;
+  for(let i=1;i<7;i++)s+=`<path d="M0 ${i*62} L800 ${i*62-18+i*4}"/>`;
+  for(let i=1;i<9;i++)s+=`<path d="M${i*88} 0 L${i*88+20-i*3} 440"/>`;
+  s+=`</g>`;
+  items.sort((a,b)=>(a.on?1:0)-(b.on?1:0)).forEach(o=>{const{x,y}=o;
+    s+=`<g class="pinp" data-k="${o.k}" data-id="${esc(o.id)}" tabindex="0" role="button">`;
+    if(o.k==="p"){s+=`<circle cx="${x}" cy="${y}" r="${o.on?15:11}" fill="${o.on?"var(--accent)":"var(--brand)"}" stroke="#fff" stroke-width="3"/><path d="M${x-4} ${y}h8M${x} ${y-4}v8" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>`;
+      if(o.lbl){const w=o.lbl.length*8+16;s+=`<rect x="${x-w/2}" y="${y-44}" width="${w}" height="24" rx="12" fill="var(--surface)" stroke="${o.on?"var(--accent)":"var(--brand)"}" stroke-width="2"/><text x="${x}" y="${y-27}" text-anchor="middle" font-size="13" font-weight="800" fill="var(--ink)">${o.lbl}</text>`}}
+    else{const z=o.small?9:12,c=o.k==="h"?"var(--red)":"var(--blue)";s+=`<rect x="${x-z}" y="${y-z}" width="${z*2}" height="${z*2}" rx="5" fill="${c}" stroke="#fff" stroke-width="3"/>`+(o.k==="h"?`<text x="${x}" y="${y+z/2.4}" text-anchor="middle" font-size="${z*1.3}" font-weight="800" fill="#fff">H</text>`:`<path d="M${x-z/2} ${y}h${z}M${x} ${y-z/2}v${z}" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>`)}
+    s+=`</g>`});
+  const m=meD();if(m){const[X,Y]=px(m.lat,m.lng);s+=`<circle class="pulse" cx="${X}" cy="${Y}" r="8" fill="#2F6BFF"/><circle cx="${X}" cy="${Y}" r="9" fill="#2F6BFF" stroke="#fff" stroke-width="3"/><text x="${X+16}" y="${Y+5}" font-size="14" font-weight="800" fill="var(--ink)">${t(me.gps&&!out?"here":"manual")}</text>`}
+  svg.innerHTML=s;
+  const go=e=>{const g=e.target.closest(".pinp");if(g)cb(g.dataset.k,g.dataset.id)};
+  svg.onclick=go;svg.onkeydown=e=>{if(e.key==="Enter")go(e)};
+}
+
+/* ===== DARMEN: лаборатории · диагностика · стоматология · диспансеры ===== */
+const CAT={
+lab:{tab:"tL",hd:"lH",nr:"nL",ic:"🧪",col:"#7B4DFF",
+ f:['["healthcare"="laboratory"]','["name"~"лаборатор|laborator|инвитро|invitro|олимп|olymp|хеликс|helix|cinevo|kdl",i]'],
+ sv:[["cbc",["Общий анализ крови","Қанның жалпы талдауы","Complete blood count"],1800],["glu",["Глюкоза","Глюкоза","Glucose"],900],["chol",["Холестерин","Холестерин","Cholesterol"],1100],["tsh",["ТТГ (щитовидная железа)","ТТГ (қалқанша без)","TSH (thyroid)"],2200],["vd",["Витамин D","D дәрумені","Vitamin D"],6500],["uri",["Общий анализ мочи","Несептің жалпы талдауы","Urinalysis"],1200],["fer",["Ферритин","Ферритин","Ferritin"],2800],["bio",["Биохимия (базовая)","Биохимия (базалық)","Basic chemistry panel"],7500]]},
+dx:{tab:"tX",hd:"xH",nr:"nX",ic:"◉",col:"#D97706",flt:1,gen:1,gk:"gX",r:8000,
+ f:['["healthcare:speciality"~"radiology|diagnostic_radiology|ultrasound"]','["name"~"мрт|mri|mrt|томограф|диагностик|рентген|radiolog|ultrasound|x-ray|ультразвук",i]','["name"~"(^|[^а-яa-z])(узи|узд|кт|ct)([^а-яa-z]|$)",i]'],
+ sv:[["mri",["МРТ","МРТ","MRI"],26000,/мрт|mri|mrt|магнитно|томограф/],["ct",["КТ","КТ","CT"],22000,/(^|[^а-яa-z])(кт|ct)([^а-яa-z]|$)|компьютерн|томограф/],["us",["УЗИ","УЗИ","Ultrasound"],6000,/(^|[^а-яa-z])(узи|узд)([^а-яa-z]|$)|ультразвук|ultrasound|sonogr/],["xr",["Рентген","Рентген","X-ray"],4500,/рентген|x-?ray|флюор|radiolog/]]},
+dent:{tab:"tT",hd:"dH",nr:"nT",ic:"🦷",col:"#0891B2",
+ f:['["amenity"="dentist"]','["healthcare"="dentist"]','["name"~"стомат|dental|dentist|зубн",i]'],
+ sv:[["chk",["Осмотр и консультация","Қарау және кеңес","Check-up & consultation"],3000],["cln",["Профессиональная чистка","Кәсіби тазалау","Professional cleaning"],12000],["fil",["Пломба","Пломба","Filling"],15000],["ext",["Удаление зуба","Тісті жұлу","Tooth extraction"],8000],["crn",["Коронка","Тәж","Crown"],45000],["imp",["Имплант","Имплант","Implant"],220000],["whi",["Отбеливание","Ағарту","Whitening"],60000]]},
+dis:{tab:"tP",hd:"pH",nr:"nP",ic:"⚕",col:"#B4447A",flt:1,gk:"gD",r:10000,
+ f:['["name"~"диспансер|dispensar|психическ|психиатр|психоневролог|наркологи|фтизи|противотуберкулез|онкологи",i]','["healthcare:speciality"~"psychiatry|addiction"]'],
+ sv:[["psy",["Психоневрологические","Психоневрологиялық","Psychoneurological"],0,/психоневр|психиатр|психическ|нервн|psych|neuro/],["nar",["Наркологические","Наркологиялық","Addiction"],0,/наркол|narco|addict/],["tb",["Противотуберкулезные","Туберкулезге қарсы","Tuberculosis"],0,/туберкул|фтиз|tuberc/],["onc",["Онкологические","Онкологиялық","Oncology"],0,/онколог|onco/],["der",["Кожно-венерологические","Тері-венерологиялық","Dermatovenerology"],0,/кожно|венер|дермат|derma/]]}
+};
+let CM=null,cl=null,cme=null,crL=null,cd={},csv={},cso="d",cq="",cpk=false,csm="",cmode="foot",cdest=null,lsub="find",cmk={},csel=null;
+const hsh=s=>{let h=2166136261;for(const ch of s)h=Math.imul(h^ch.charCodeAt(0),16777619);return h>>>0};
+const cpr=(x,s)=>Math.round(s[2]*(.85+hsh(x.id+s[0])%36/100)/50)*50;
+const csvo=()=>CAT[tab].sv.find(z=>z[0]===csv[tab]);
+const cnm=x=>x.name||t(CAT[tab].tab);
+const sn=(c,s)=>s==="gen"?t(c.gk):c.sv.find(z=>z[0]===s)[1][LI];
+const bkL=()=>{try{return JSON.parse(st.get("dg_bk")||"[]")}catch(e){return[]}},bkS=a=>st.set("dg_bk",JSON.stringify(a.slice(0,20)));
+function subsOf(tg,nm,c){const a=(nm.join(" ")+" "+(tg["healthcare:speciality"]||"")).toLowerCase();let s=c.sv.filter(z=>z[3]&&z[3].test(a)).map(z=>z[0]);if(c.flt&&!s.length)s=["gen"];return s}
+const qC=(c,lat,lng,r)=>`[out:json][timeout:25];(${c.f.map(f=>`nwr${f}(around:${r},${lat},${lng});`).join("")});out center tags 300;`;
+async function loadC(k,lat,lng,r){const d=cd[k]=cd[k]||{rows:[]};d.loading=true;d.err=false;d.at=me.lat+","+me.lng;if(tab===k)renderCat();
+  try{d.rows=parse(await ovp(qC(CAT[k],lat,lng,r||CAT[k].r||5000)),CAT[k])}catch(e){d.err=true}
+  d.loading=false;if(tab===k)renderCat(1,1)}
+function cvis(){const d=cd[tab];if(!d)return[];const c=CAT[tab],s=csv[tab],sv=csvo();
+  return d.rows.filter(x=>(!cq||x.all.includes(cq))&&(!(c.flt&&s)||x.subs.includes(s)||(c.gen&&x.subs.includes("gen")))).map(x=>({...x,d:dist(me.lat,me.lng,x.lat,x.lng),p:sv&&sv[2]?cpr(x,sv):0})).sort((a,b)=>cso==="p"&&sv&&sv[2]?a.p-b.p||a.d-b.d:a.d-b.d)}
+const cacts=x=>(x.phone?`<a class="btn sm" href="tel:${telc(x.phone)}">${t("call")}</a>`:`<span class="btn sm dis">${t("phone0")}</span>`)+`<button class="btn sm ghost" type="button" onclick="cRoute('${x.id}')">${t("route")}</button>`+(tab==="lab"?`<button class="btn sm" type="button" style="background:var(--accent)" onclick="cBook('${x.id}')">${t("book")}</button>`:"");
+const popC=x=>`<div class="pop"><b>${esc(cnm(x))}</b>${x.p?`<div><b style="color:var(--brand)">${money(x.p)}</b></div>`:""}<div>📍 ${x.addr?esc(x.addr):t("addr0")}</div><div>☎ ${x.phone?`<a href="tel:${telc(x.phone)}">${esc(x.phone)}</a>`:t("phone0")}</div><div>🕘 ${esc(hrs(x))}</div>${x.site?`<div><a href="${esc(x.site)}" target="_blank" rel="noopener noreferrer">${t("site")}</a></div>`:""}<div class="acts">${cacts(x)}<a class="btn sm ghost" href="${navUrl(x)}" target="_blank" rel="noopener noreferrer">${t("nav")}</a></div></div>`;
+const cic=on=>L.divIcon({className:"",html:`<div class="mk${on?" on":""}" style="background:${CAT[tab].col};border-radius:7px">${CAT[tab].ic}</div>`,iconSize:[28,28],iconAnchor:[14,14],popupAnchor:[0,-16]});
+function initCM(){
+  if(CM)return true;
+  if(!window.L){$("#cmap").innerHTML=`<div class="empty" style="margin:16px">${t("leafErr")}</div>`;return false}
+  CM=L.map("cmap",{real:true}).setView([me.lat,me.lng],14);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>"}).addTo(CM);
+  cl=L.layerGroup().addTo(CM);cme=L.layerGroup().addTo(CM);
+  CM.on("click",e=>{if(!cpk)return;cpk=false;$("#cmap").classList.remove("pick");me={lat:e.latlng.lat,lng:e.latlng.lng,manual:true};out=false;renderCat()});
+  return true}
+function drawMeC(){cme.clearLayers();
+  L.marker([me.lat,me.lng],{icon:L.divIcon({className:"",html:`<div style="display:flex;align-items:center;gap:6px;transform:translate(-9px,-9px)"><div class="meDot"></div><span class="meLbl">${t(me.gps?"here":"manual")}</span></div>`,iconSize:[0,0]}),zIndexOffset:1000,keyboard:false}).addTo(cme);
+  if(me.gps&&me.acc&&me.acc<2000)L.circle([me.lat,me.lng],{radius:me.acc,color:"#2F6BFF",weight:1,fillOpacity:.08}).addTo(cme)}
+function mineHtml(){const a=bkL();if(!a.length)return`<div class="empty">${t("noBk")}</div>`;const n=Date.now();
+  return a.map(b=>{const s=n<b.ts?0:n<b.ts+4*36e5?1:2;return`<div class="ph"><div class="top"><span class="name">${esc(b.lab)}</span><span class="price">${esc(b.code)}</span></div>
+  <div class="meta">${new Date(b.ts).toLocaleString(["ru-RU","kk-KZ","en-GB"][LI],{dateStyle:"medium",timeStyle:"short"})} · ${money(b.total)}</div>
+  <div class="meta">${b.items.map(i=>esc(CAT.lab.sv.find(z=>z[0]===i)[1][LI])).join(", ")}</div>
+  <span class="tag ${s===2?"":s?"blue":"few"}">${t(["bW","bP","bR"][s])}</span>${s===2?`<p class="meta" style="margin:6px 0 0">${t("bRn")}</p>`:""}
+  <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">${b.lt?`<a class="btn sm" href="tel:${telc(b.lt)}">${t("call")}</a>`:""}${s<2?`<button class="btn sm ghost" data-bk="sim:${b.code}">${t("sim")}</button>`:""}<button class="btn sm ghost" data-bk="del:${b.code}">${t("cancel")}</button></div></div>`}).join("")}
+function renderCat(redraw,fit){
+  const k=tab,c=CAT[k];if(!c||!me)return;const d=cd[k];
+  if(!d||(d.at!==me.lat+","+me.lng&&!d.loading&&!d.err)){loadC(k,me.lat,me.lng);return}
+  $("#ch").textContent=t(c.hd);$("#cq").placeholder=t("cph");
+  const sv=csvo(),v=cvis(),mine=k==="lab"&&lsub==="mine";
+  $("#csv").innerHTML=c.sv.map(s=>`<button class="chip" data-s="${s[0]}" aria-pressed="${csv[k]===s[0]}">${esc(s[1][LI])}</button>`).join("");
+  $("#ctools").innerHTML=(sv&&sv[2]?`<button class="chip" data-a="sd" aria-pressed="${cso==="d"}">${t("near")}</button><button class="chip" data-a="sp" aria-pressed="${cso==="p"}">${t("cheap")}</button>`:"")+
+   `<button class="chip" data-a="refresh">⟳ ${t("refresh")}</button><button class="chip" data-a="here">${t("sHere")}</button><button class="chip" data-a="loc">◎ ${t("myLoc")}</button><button class="chip" data-a="pick" aria-pressed="${cpk}">${t("pick")}</button>`+
+   (k==="lab"?`<button class="chip" data-a="mine" aria-pressed="${mine}">📋 ${t("myRec")}</button>`:"")+
+   `<select id="cc" aria-label="${t("sCity")}">${CK.map(z=>`<option value="${z}" ${z===S.city?"selected":""}>${CITIES[z].n[LI]}</option>`).join("")}</select>`;
+  const nf=v[0],b=$("#cban");b.classList.toggle("hide",!nf);
+  if(nf)b.innerHTML=`<b>${t(c.nr)}:</b> ${esc(cnm(nf))} · ${km(nf.d)}${nf.phone?` · <a href="tel:${telc(nf.phone)}" style="color:var(--brand);font-weight:700">${esc(nf.phone)}</a>`:""}`;
+  $("#cstat").textContent=cpk?t("pickHint"):d.loading?t("loading"):d.err?t("loadErr"):csm||(d.rows.length?t("found",{n:v.length}):"");
+  const minP=sv&&sv[2]&&v.length?Math.min(...v.map(x=>x.p)):0;
+  $("#clist").innerHTML=mine?mineHtml():!v.length&&!d.loading?`<div class="empty">${d.err?t("loadErr"):t("noRes")}</div>`:v.slice(0,100).map(x=>`<div class="ph" data-id="${x.id}" aria-current="${csel===x.id}" role="button" tabindex="0">
+   <div class="top"><span class="name">${esc(cnm(x))}</span>${x.p?`<span class="price ${x.p===minP?"low":""}">${money(x.p)}</span>`:`<span class="meta">${km(x.d)}</span>`}</div>
+   <div class="meta">${x.addr?esc(x.addr):t("addr0")}${x.p?" · "+km(x.d):""}</div><div class="meta">🕘 ${esc(hrs(x))}</div>
+   ${x.subs.map(s=>`<span class="tag ${s==="gen"?"few":"blue"}">${esc(sn(c,s))}</span>`).join(" ")}${x.p&&x.p===minP?` <span class="tag">${t("low")}</span>`:""}
+   <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">${cacts(x)}</div></div>`).join("");
+  $("#cnote").textContent=(k==="dis"?"":t("cDemo")+" ")+t("osm");
+  if(!initCM())return;
+  drawMeC();cl.clearLayers();cmk={};
+  v.forEach(x=>{const m=L.marker([x.lat,x.lng],{icon:cic(csel===x.id),title:cnm(x)}).bindPopup(popC(x),{maxWidth:290});m.on("click",()=>{csel=x.id;chl()});m.addTo(cl);cmk[x.id]=m});
+  if(fit&&v.length)CM.fitBounds(L.latLngBounds(v.map(x=>[x.lat,x.lng])).extend([me.lat,me.lng]),{padding:[40,40],maxZoom:17});
+  else if(redraw)CM.setView([me.lat,me.lng],14)}
+function chl(){document.querySelectorAll("#clist .ph[data-id]").forEach(e=>e.setAttribute("aria-current",e.dataset.id===csel));Object.entries(cmk).forEach(([id,m])=>m.setIcon(cic(id===csel)))}
+function cFocus(id){const x=cd[tab].rows.find(r=>r.id===id),m=cmk[id];if(!x||!CM)return;csel=id;chl();CM.setView([x.lat,x.lng],Math.max(CM.getZoom(),16));if(m)m.openPopup()}
+async function cRoute(id,mode){const x=cd[tab].rows.find(r=>r.id===id);if(!x||!CM)return;if(mode)cmode=mode;cdest=id;CM.closePopup();
+  const p=$("#cpanel");p.classList.remove("hide");p.textContent=t("loading");
+  const chips=`<div class="chips" style="margin:8px 0 0"><button class="chip" data-m="foot" aria-pressed="${cmode==="foot"}">${t("walk")}</button><button class="chip" data-m="car" aria-pressed="${cmode==="car"}">${t("drive")}</button><button class="chip" data-m="x">${t("clearRoute")}</button></div>`;
+  try{const r=await osrmReal(cmode,me,x);if(crL)CM.removeLayer(crL);crL=L.geoJSON(r.geometry,{style:{color:"#0B7F8C",weight:6,opacity:.9}}).addTo(CM);CM.fitBounds(crL.getBounds(),{padding:[40,40]});
+    p.innerHTML=`<b>${esc(cnm(x))}</b><br>${t("routeInfo",{d:km(r.distance/1000),t:fmtMin(Math.max(1,Math.round(r.duration/60)))})}${chips}`}
+  catch(e){p.innerHTML=`${t("routeErr")}${chips}`}}
+function cBook(id){const x=cd.lab.rows.find(r=>r.id===id);if(!x)return;if(CM)CM.closePopup();
+  const p=$("#cpanel"),loc=["ru-RU","kk-KZ","en-GB"][LI],SV=CAT.lab.sv,pre=csv.lab||"cbc";p.classList.remove("hide");
+  const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return`<option value="${d.toLocaleDateString("sv-SE")}">${d.toLocaleDateString(loc,{weekday:"short",day:"numeric",month:"short"})}</option>`}).join("");
+  let sl="";for(let h=8;h<18;h++)["00","30"].forEach(m=>{const s=String(h).padStart(2,"0")+":"+m;sl+=`<option>${s}</option>`});
+  p.innerHTML=`<b>${t("bkT")}</b><br>${esc(cnm(x))}<form class="bk" id="bf"><label>${t("bDate")}<select id="bd">${days}</select></label><label>${t("bTime")}<select id="bt">${sl}</select></label>
+   <div><b style="font-size:14px">${t("bAn")}</b><div class="bkc">${SV.map(s=>`<label class="chk"><input type="checkbox" value="${s[0]}" ${s[0]===pre?"checked":""}>${esc(s[1][LI])} · ${money(cpr(x,s))}</label>`).join("")}</div></div>
+   <label>${t("bName")}<input id="bn" autocomplete="name"></label><label>${t("bTel")}<input id="bp" type="tel" autocomplete="tel" placeholder="+7"></label>
+   <p id="bsum" style="margin:0;font-weight:800"></p><p class="err" id="berr" role="alert"></p><button class="btn" type="submit">${t("bSend")}</button></form>`;
+  const f=$("#bf"),pick=()=>[...f.querySelectorAll("input[type=checkbox]:checked")].map(i=>i.value),sum=()=>{const n=pick();$("#bsum").textContent=t("bTot",{n:money(n.reduce((a,i)=>a+cpr(x,SV.find(z=>z[0]===i)),0))});return n};
+  f.onchange=sum;sum();
+  f.onsubmit=e=>{e.preventDefault();const n=sum(),nm=$("#bn").value.trim(),ph=$("#bp").value.trim();
+    if(!nm||ph.replace(/\D/g,"").length<10||!n.length){$("#berr").textContent=t("bErr");return}
+    const code="DM-"+(1000+Math.floor(Math.random()*9000)),total=n.reduce((a,i)=>a+cpr(x,SV.find(z=>z[0]===i)),0);
+    bkS([{code,lab:cnm(x),lt:x.phone,ts:new Date($("#bd").value+"T"+$("#bt").value).getTime(),items:n,total,name:nm,tel:ph},...bkL()]);
+    p.innerHTML=`<b>${t("bOk",{c:code})}</b><p style="margin:8px 0">${t("bOk2")}</p><div class="chips" style="margin:8px 0 0">${x.phone?`<a class="btn sm" href="tel:${telc(x.phone)}">${t("call")}</a>`:""}<button class="chip" type="button" onclick="lsub='mine';renderCat()">${t("myRec")}</button></div>`};
+  p.scrollIntoView({block:"nearest",behavior:"smooth"})}
+$("#csv").onclick=e=>{const b=e.target.closest("[data-s]");if(!b)return;csv[tab]=csv[tab]===b.dataset.s?null:b.dataset.s;if(!csvo()||!csvo()[2])cso="d";renderCat(1,1)};
+$("#cform").onsubmit=e=>{e.preventDefault();cq=$("#cq").value.trim().toLowerCase();renderCat(1,1)};
+$("#ctools").onclick=e=>{const b=e.target.closest("[data-a]");if(!b||!me)return;const a=b.dataset.a,k=tab;
+  if(a==="sd"||a==="sp"){cso=a==="sd"?"d":"p";renderCat()}
+  else if(a==="refresh"){loadC(k,me.lat,me.lng)}
+  else if(a==="here"&&CM){const c=CM.getCenter();cq="";$("#cq").value="";loadC(k,c.lat,c.lng,Math.max(1500,Math.min(15000,Math.round(c.distanceTo(CM.getBounds().getNorthEast())))))}
+  else if(a==="loc"){if(!navigator.geolocation){csm=t("locErr");renderCat();return}csm=t("geoW");renderCat();
+    navigator.geolocation.getCurrentPosition(p=>{gotGps(p);csm="";if(CM)CM.setView([me.lat,me.lng],15);renderCat()},()=>{csm=t("locErr");renderCat()},{timeout:12000,enableHighAccuracy:true})}
+  else if(a==="pick"){cpk=!cpk;$("#cmap").classList.toggle("pick",cpk);renderCat()}
+  else if(a==="mine"){lsub=lsub==="mine"?"find":"mine";renderCat()}};
+$("#ctools").onchange=e=>{if(e.target.id!=="cc")return;S.city=e.target.value;save();toCenter();cd={};loadAround(me.lat,me.lng,5000,true);if(CM)CM.setView([me.lat,me.lng],14);renderCat()};
+$("#clist").onclick=e=>{const b=e.target.closest("[data-bk]");
+  if(b){const[a,code]=b.dataset.bk.split(":");let A=bkL();if(a==="del")A=A.filter(z=>z.code!==code);else A.forEach(z=>{if(z.code===code)z.ts=Date.now()-30*36e5});bkS(A);renderCat();return}
+  if(e.target.closest("a,button"))return;const c=e.target.closest(".ph[data-id]");if(c)cFocus(c.dataset.id)};
+$("#clist").onkeydown=e=>{if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.id)cFocus(e.target.dataset.id)};
+$("#cpanel").onclick=e=>{const b=e.target.closest("[data-m]");if(!b)return;if(b.dataset.m==="x"){if(crL&&CM)CM.removeLayer(crL);crL=null;cdest=null;$("#cpanel").classList.add("hide")}else cRoute(cdest,b.dataset.m)};
+
+/* ===== офлайн-данные и маршруты (демо) ===== */
+const mb=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const hn=s=>{let h=5381;for(const c of s)h=Math.imul(h,33)^c.charCodeAt(0);return h>>>0};
+const WD=["Нур","Алтын","Береке","Шипагер","Жарық","Арман","Сапа","Дана","Қамқор","Жастар","Ұлан","Таң","Айгерим","Наурыз","Бастау","Мирас"];
+const DIS=["Городской психоневрологический диспансер","Центр психического здоровья","Наркологический диспансер","Противотуберкулезный диспансер №1","Онкологический диспансер","Кожно-венерологический диспансер","Областной психоневрологический диспансер","Противотуберкулезный диспансер №2","Детский психоневрологический диспансер","Республиканский наркологический центр"];
+function anchor(lat,lng){let bk=null,bd=1e9;for(const k of CK){const c=CITIES[k].c,d=dist(lat,lng,c[0],c[1]);if(d<bd){bd=d;bk=k}}return{k:bd<150?bk:null,lat,lng}}
+function gen(cat,a){
+  const R=mb(hn((a.k||"x"+a.lat.toFixed(1)+a.lng.toFixed(1))+cat)),tri=()=>R()+R()-1,cc=a.k?CITIES[a.k]:null,sts=cc?cc.st:ST0,code=cc?cc.code:"727",W=()=>WD[Math.floor(R()*WD.length)];
+  const kinds={med:[...Array(8).fill("h"),...Array(14).fill("c"),...Array(20).fill("p")],lab:Array(30).fill("l"),dx:Array(28).fill("d"),dent:Array(30).fill("s"),dis:DIS.map((_,i)=>i)}[cat],off={med:0,lab:100,dx:200,dent:300,dis:400}[cat];
+  return kinds.map((k,i)=>{const tg={},N=1+Math.floor(R()*24);let name;
+    if(cat==="med"){if(k==="h"){tg.amenity="hospital";name=["Городская больница №","Областная клиническая больница №","Центральная больница №","Многопрофильная больница №"][i%4]+N}
+      else if(k==="c"){tg.amenity="clinic";name=["Городская поликлиника №"+N,"Медицинский центр «"+W()+"»","Семейная поликлиника №"+N][i%3]}
+      else{tg.amenity="pharmacy";name=["Аптека «"+W()+"»",W()+" Фарм","Аптека №"+N][i%3]}}
+    else if(cat==="lab"){tg.healthcare="laboratory";name=["Лаборатория «"+W()+"»",W()+" Лаб","Медлаборатория «"+W()+"»"][i%3]}
+    else if(cat==="dx"){tg.amenity="clinic";name=["МРТ-центр «"+W()+"»","Центр КТ «"+W()+"»","УЗИ-клиника «"+W()+"»","Рентген-центр «"+W()+"»","Центр МРТ и КТ «"+W()+"»","Диагностический центр «"+W()+"»","Центр диагностики «"+W()+"»"][i%7]}
+    else if(cat==="dent"){tg.amenity="dentist";name=["Стоматология «"+W()+"»","Dental "+W(),"Стоматологическая клиника «"+W()+"»"][i%3]}
+    else{tg.healthcare="clinic";name=DIS[k]}
+    const oh=k==="h"?"24/7":cat==="lab"?"Mo-Sa 07:00-17:00":(k==="p"&&R()<.25)?"24/7":R()<.5?"Mo-Fr 08:00-18:00":"Mo-Su 09:00-20:00",n=String(1000000+Math.floor(R()*8999999));
+    return{type:"node",id:off+i+1,lat:a.lat+tri()*.03,lon:a.lng+tri()*.04,tags:{...tg,name,"addr:street":sts[Math.floor(R()*12)],"addr:housenumber":String(1+Math.floor(R()*120)),"addr:city":cc?cc.n[0]:"",phone:`+7 (${code}) ${n.slice(0,3)}-${n.slice(3,5)}-${n.slice(5,7)}`,opening_hours:oh}}})}
+async function ovp(q){const m=q.match(/around:(\d+),(-?[\d.]+),(-?[\d.]+)/);if(!m)return[];const r=+m[1],lat=+m[2],lng=+m[3],
+  cat=/dentist/.test(q)?"dent":/laboratory/.test(q)?"lab":/диспансер/.test(q)?"dis":/radiology/.test(q)?"dx":"med";
+  let els=gen(cat,anchor(lat,lng)).filter(e=>dist(lat,lng,e.lat,e.lon)*1000<=r);
+  const n=r===40000&&q.match(/"name"~"\(([^"]+)\)"/);if(n){const re=new RegExp(n[1],"i");els=els.filter(e=>re.test(e.tags.name))}
+  return els}
+async function osrm(mode,a,b){const d=(dist(a.lat,a.lng,a.lat,b.lng)+dist(a.lat,b.lng,b.lat,b.lng))*1000;
+  return{geometry:{type:"LineString",coordinates:[[a.lng,a.lat],[b.lng,a.lat],[b.lng,b.lat]]},distance:d,duration:d/(mode==="foot"?1.35:7.5)}}
+
+setLang(S.lang);
+/* сразу просим доступ к геолокации при открытии сайта */
+if(navigator.geolocation)setTimeout(()=>{if(!$("#s-geo").classList.contains("hide"))$("#geoBtn").click()},400);
+</script>
+</body>
+</html>
